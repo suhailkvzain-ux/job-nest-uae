@@ -100,6 +100,19 @@ function serverActionAllowedOrigins(): string[] {
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // `isomorphic-dompurify` pulls in `jsdom`, whose transitive deps
+  // (`@exodus/bytes`, `html-encoding-sniffer`, `whatwg-url`) ship as
+  // ESM-only packages using modern `exports` conditions. Webpack's
+  // production server bundle rewrites `require()` calls in a way that
+  // breaks that resolution ("require() of ES Module ... not
+  // supported"), crashing every route that actually invokes
+  // `sanitizeAdHtml`/the SVG sanitizer at runtime (ad rendering,
+  // branding uploads) with a 500. Marking the package external tells
+  // Next to leave it out of the webpack bundle and `require()` it
+  // directly from node_modules at request time instead, where Node's
+  // own module resolution (which understands `exports` conditions
+  // correctly) can load it.
+  serverExternalPackages: ["isomorphic-dompurify", "jsdom"],
   images: {
     remotePatterns: [
       {
