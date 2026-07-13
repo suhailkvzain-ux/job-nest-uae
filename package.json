@@ -2,7 +2,7 @@
   "name": "job-nest-uae",
   "version": "0.1.0",
   "private": true,
-  "description": "Job Nest UAE — a job discovery platform. Browse verified vacancies; apply directly on the employer's site.",
+  "description": "Job Nest UAE \u2014 a job discovery platform. Browse verified vacancies; apply directly on the employer's site.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -86,5 +86,8 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "overrides": {
+    "jsdom": "26.1.0"
   }
 }
