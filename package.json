@@ -5,7 +5,7 @@
   "description": "Job Nest UAE — a job discovery platform. Browse verified vacancies; apply directly on the employer's site.",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",

@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { JobWithRelations } from "@/services/jobs.service";
-import { truncate } from "@/utils/format";
+import { formatJobLocation, truncate } from "@/utils/format";
 
 export function CompanyInitial({ name }: { name: string }) {
   return (
@@ -31,7 +31,12 @@ export interface JobCardProps {
 export function JobCard({ job, className }: JobCardProps) {
   return (
     <Link href={`/jobs/${job.slug}`} className="block h-full">
-      <Card className={cn("group flex h-full flex-col transition-all hover:-translate-y-0.5 hover:shadow-soft-lg", className)}>
+      <Card
+        className={cn(
+          "group flex h-full flex-col transition-all hover:-translate-y-0.5 hover:shadow-soft-lg",
+          className,
+        )}
+      >
         <CardContent className="flex flex-1 flex-col gap-4 p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -73,9 +78,11 @@ export function CompactJobCard({ job, className }: JobCardProps) {
             <CompanyInitial name={job.company.name} />
           </Avatar>
           <div className="flex min-w-0 flex-1 flex-col">
-            <span className="truncate font-medium text-foreground group-hover:text-primary">{job.title}</span>
+            <span className="truncate font-medium text-foreground group-hover:text-primary">
+              {job.title}
+            </span>
             <span className="truncate text-xs text-muted-foreground">
-              {job.company.name} · {job.location.name}
+              {job.company.name} · {formatJobLocation(job)}
             </span>
           </div>
         </CardContent>
@@ -123,7 +130,9 @@ export function SimilarJobCard({ job, className }: JobCardProps) {
     <Link href={`/jobs/${job.slug}`} className="block">
       <Card className={cn("group transition-shadow hover:shadow-soft", className)}>
         <CardContent className="flex flex-col gap-2 p-5">
-          <span className="font-medium leading-tight text-foreground group-hover:text-primary">{job.title}</span>
+          <span className="font-medium leading-tight text-foreground group-hover:text-primary">
+            {job.title}
+          </span>
           <span className="text-xs text-muted-foreground">{job.company.name}</span>
           <JobMeta job={job} className="pt-1" />
         </CardContent>

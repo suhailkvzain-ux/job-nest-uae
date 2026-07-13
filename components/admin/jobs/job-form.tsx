@@ -2,7 +2,15 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { JobStatus } from "@prisma/client";
-import { CalendarClock, Loader2, RotateCcw, Save, Send, Archive as ArchiveIcon, Eye } from "lucide-react";
+import {
+  CalendarClock,
+  Loader2,
+  RotateCcw,
+  Save,
+  Send,
+  Archive as ArchiveIcon,
+  Eye,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,7 +25,6 @@ import {
   scheduleJobAction,
   updateJobAction,
 } from "@/actions/admin-jobs.actions";
-import { createLocationAction } from "@/actions/admin-locations.actions";
 import { JobSeoPreview } from "@/components/admin/jobs/job-seo-preview";
 import { JobStatusBadge } from "@/components/badges/status-badges";
 import { FormCombobox } from "@/components/forms/form-combobox";
@@ -83,6 +90,7 @@ const EMPTY_DEFAULTS: CreateJobInput = {
   companyId: "",
   categoryId: "",
   locationId: "",
+  area: null,
   employmentType: "FULL_TIME",
   experience: null,
   salaryMin: null,
@@ -120,7 +128,15 @@ type PublishIntent = "draft" | "publish" | "schedule" | "archive";
  * logic (setting `publishedAt` correctly) stays in one place rather
  * than being re-implemented here.
  */
-export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, categories, locations }: JobFormProps) {
+export function JobForm({
+  mode,
+  jobId,
+  currentStatus,
+  defaultValues,
+  companies,
+  categories,
+  locations,
+}: JobFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [submittingIntent, setSubmittingIntent] = useState<PublishIntent | null>(null);
@@ -161,7 +177,14 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
     const base = [watchedTitle, company, location].filter(Boolean).join(" ");
     setValue("slug", slugify(base), { shouldDirty: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-derive from these three source fields
-  }, [watchedTitle, watchedCompanyId, watchedLocationId, slugTouched, companyOptions, locationOptions]);
+  }, [
+    watchedTitle,
+    watchedCompanyId,
+    watchedLocationId,
+    slugTouched,
+    companyOptions,
+    locationOptions,
+  ]);
 
   async function handleCreateCompany(name: string) {
     const result = await createCompanyAction({ name });
@@ -182,17 +205,6 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
     }
     const created = { id: result.categoryId, name };
     setCategoryOptions((prev) => [...prev, created]);
-    return { label: created.name, value: created.id };
-  }
-
-  async function handleCreateLocation(name: string) {
-    const result = await createLocationAction({ name });
-    if (!result.success || !result.locationId) {
-      toast({ title: result.error ?? "Could not create location", variant: "destructive" });
-      return null;
-    }
-    const created = { id: result.locationId, name };
-    setLocationOptions((prev) => [...prev, created]);
     return { label: created.name, value: created.id };
   }
 
@@ -236,21 +248,33 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
       if (intent === "publish") {
         const result = await publishJobAction(resultJobId);
         if (!result.success) {
-          toast({ title: "Saved, but publishing failed", description: result.error, variant: "destructive" });
+          toast({
+            title: "Saved, but publishing failed",
+            description: result.error,
+            variant: "destructive",
+          });
           router.push("/admin/jobs");
           return;
         }
       } else if (intent === "schedule" && scheduleDate) {
         const result = await scheduleJobAction(resultJobId, scheduleDate);
         if (!result.success) {
-          toast({ title: "Saved, but scheduling failed", description: result.error, variant: "destructive" });
+          toast({
+            title: "Saved, but scheduling failed",
+            description: result.error,
+            variant: "destructive",
+          });
           router.push("/admin/jobs");
           return;
         }
       } else if (intent === "archive") {
         const result = await archiveJobAction(resultJobId);
         if (!result.success) {
-          toast({ title: "Saved, but archiving failed", description: result.error, variant: "destructive" });
+          toast({
+            title: "Saved, but archiving failed",
+            description: result.error,
+            variant: "destructive",
+          });
           router.push("/admin/jobs");
           return;
         }
@@ -282,14 +306,23 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
   const isBusy = submittingIntent !== null;
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px]">
+    <form
+      onSubmit={(e) => e.preventDefault()}
+      className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px]"
+    >
       <div className="flex min-w-0 flex-col gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Basic Information</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <FormTextInput control={control} name="title" label="Job Title" required className="sm:col-span-2" />
+            <FormTextInput
+              control={control}
+              name="title"
+              label="Job Title"
+              required
+              className="sm:col-span-2"
+            />
             <FormCombobox
               control={control}
               name="companyId"
@@ -310,15 +343,26 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
               options={categoryOptions.map((c) => ({ label: c.name, value: c.id }))}
               onCreate={handleCreateCategory}
             />
-            <FormCombobox
+            <FormSelect
               control={control}
               name="locationId"
               label="Location"
               required
-              entityName="location"
-              placeholder="Search or add a location…"
+              placeholder="Select an emirate…"
               options={locationOptions.map((l) => ({ label: l.name, value: l.id }))}
-              onCreate={handleCreateLocation}
+            />
+            {/*
+              Free-text sub-area (e.g. "Al Quoz", "Al Karama") — a plain
+              manually-typed field, deliberately NOT a combobox tied to
+              `locations`. Locations is restricted to exactly the 7
+              emirates (the Select above); this is just extra display
+              detail with no reference-data management of its own.
+            */}
+            <FormTextInput
+              control={control}
+              name="area"
+              label="Area"
+              placeholder="e.g. Al Quoz, Al Karama"
             />
             <FormSelect
               control={control}
@@ -327,13 +371,28 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
               required
               options={EMPLOYMENT_TYPE_OPTIONS}
             />
-            <FormTextInput control={control} name="experience" label="Experience" placeholder="e.g. 3–5 years" />
+            <FormTextInput
+              control={control}
+              name="experience"
+              label="Experience"
+              placeholder="e.g. 3–5 years"
+            />
             <FormNumberInput control={control} name="salaryMin" label="Salary Min" />
             <FormNumberInput control={control} name="salaryMax" label="Salary Max" />
-            <FormTextInput control={control} name="salaryCurrency" label="Currency" placeholder="AED" />
+            <FormTextInput
+              control={control}
+              name="salaryCurrency"
+              label="Currency"
+              placeholder="AED"
+            />
             <FormTextInput control={control} name="education" label="Education" />
             <FormTextInput control={control} name="nationality" label="Nationality" />
-            <FormTagsInput control={control} name="languages" label="Languages" className="sm:col-span-2" />
+            <FormTagsInput
+              control={control}
+              name="languages"
+              label="Languages"
+              className="sm:col-span-2"
+            />
             <FormNumberInput control={control} name="vacancies" label="Number of Vacancies" />
             <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row">
               <FormSwitch control={control} name="featured" label="Featured" className="flex-1" />
@@ -368,8 +427,17 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
             <CardTitle className="text-base">Content</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-6">
-            <FormRichTextEditor control={control} name="description" label="Job Description" required />
-            <FormRichTextEditor control={control} name="responsibilities" label="Responsibilities" />
+            <FormRichTextEditor
+              control={control}
+              name="description"
+              label="Job Description"
+              required
+            />
+            <FormRichTextEditor
+              control={control}
+              name="responsibilities"
+              label="Responsibilities"
+            />
             <FormRichTextEditor control={control} name="requirements" label="Requirements" />
             <FormRichTextEditor control={control} name="benefits" label="Benefits" />
           </CardContent>
@@ -416,11 +484,17 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
               <FormTextInput control={control} name="metaTitle" label="Meta Title" />
               <FormTextInput control={control} name="metaDescription" label="Meta Description" />
               <FormTextInput control={control} name="ogTitle" label="Open Graph Title" />
-              <FormTextInput control={control} name="ogDescription" label="Open Graph Description" />
+              <FormTextInput
+                control={control}
+                name="ogDescription"
+                label="Open Graph Description"
+              />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-muted-foreground">Canonical URL (derived from slug)</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                Canonical URL (derived from slug)
+              </span>
               <code className="truncate rounded-lg bg-muted px-3 py-2 text-xs text-foreground">
                 {siteConfig.url}/jobs/{watchedSlug || "…"}
               </code>
@@ -429,7 +503,9 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
             <Divider />
 
             <div className="flex flex-col gap-2">
-              <span className="text-xs font-medium text-muted-foreground">Google Search Preview</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                Google Search Preview
+              </span>
               <JobSeoPreview
                 slug={watchedSlug ?? ""}
                 title={watchedMetaTitle || watchedTitle}
@@ -460,7 +536,11 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
               disabled={isBusy}
               onClick={handleSubmit((data) => onSubmit(data, "draft"))}
             >
-              {submittingIntent === "draft" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {submittingIntent === "draft" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
               Save Draft
             </Button>
 
@@ -470,7 +550,11 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
               disabled={isBusy}
               onClick={handleSubmit((data) => onSubmit(data, "publish"))}
             >
-              {submittingIntent === "publish" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {submittingIntent === "publish" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
               Publish Now
             </Button>
 
@@ -533,7 +617,12 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
 
             <Divider />
 
-            <Button type="button" variant="ghost" className="w-full text-muted-foreground" onClick={handleCancel}>
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full text-muted-foreground"
+              onClick={handleCancel}
+            >
               Cancel
             </Button>
           </CardContent>

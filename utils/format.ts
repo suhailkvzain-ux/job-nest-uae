@@ -97,3 +97,19 @@ export function computeCtr(impressions: number, clicks: number): number {
   if (impressions <= 0) return 0;
   return Math.round((clicks / impressions) * 10000) / 100;
 }
+
+/**
+ * Combines a job's free-text `area` (e.g. "Al Quoz") with its emirate
+ * `location.name` (e.g. "Dubai") into one display string — "Al Quoz,
+ * Dubai" — falling back to just the emirate name when no area was
+ * entered. `area` isn't a `locations` foreign key (see the Job.area
+ * doc comment in prisma/schema.prisma), so this formatting lives here
+ * rather than on the Location relation itself.
+ */
+export function formatJobLocation(job: {
+  area?: string | null;
+  location: { name: string };
+}): string {
+  const area = job.area?.trim();
+  return area ? `${area}, ${job.location.name}` : job.location.name;
+}

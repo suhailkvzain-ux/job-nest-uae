@@ -17,7 +17,7 @@ import {
 import { employmentTypeLabels } from "@/components/badges/status-badges";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { JobWithRelations } from "@/services/jobs.service";
-import { formatDate, formatNumber } from "@/utils/format";
+import { formatDate, formatJobLocation, formatNumber } from "@/utils/format";
 
 interface InfoItem {
   icon: LucideIcon;
@@ -37,7 +37,7 @@ function formatSalary(job: JobWithRelations): string | null {
 function buildInfoItems(job: JobWithRelations): InfoItem[] {
   const items: InfoItem[] = [
     { icon: Briefcase, label: "Employment Type", value: employmentTypeLabels[job.employmentType] },
-    { icon: MapPin, label: "Location", value: job.location.name },
+    { icon: MapPin, label: "Location", value: formatJobLocation(job) },
     { icon: Tag, label: "Category", value: job.category.name },
   ];
 
@@ -47,7 +47,8 @@ function buildInfoItems(job: JobWithRelations): InfoItem[] {
   const salary = formatSalary(job);
   if (salary) items.push({ icon: Banknote, label: "Salary", value: salary });
 
-  if (job.visaStatus) items.push({ icon: ShieldCheck, label: "Visa Status", value: job.visaStatus });
+  if (job.visaStatus)
+    items.push({ icon: ShieldCheck, label: "Visa Status", value: job.visaStatus });
   if (job.nationality) items.push({ icon: Globe2, label: "Nationality", value: job.nationality });
   if (job.languages.length > 0) {
     items.push({ icon: LanguagesIcon, label: "Languages", value: job.languages.join(", ") });
@@ -56,7 +57,11 @@ function buildInfoItems(job: JobWithRelations): InfoItem[] {
   items.push({ icon: Users, label: "Vacancies", value: String(job.vacancies) });
 
   if (job.applicationDeadline) {
-    items.push({ icon: CalendarClock, label: "Application Deadline", value: formatDate(job.applicationDeadline) });
+    items.push({
+      icon: CalendarClock,
+      label: "Application Deadline",
+      value: formatDate(job.applicationDeadline),
+    });
   }
   if (job.publishedAt) {
     items.push({ icon: Calendar, label: "Posted Date", value: formatDate(job.publishedAt) });

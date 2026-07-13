@@ -231,6 +231,14 @@ model Job {
   companyId  String @map("company_id") @db.Uuid
   categoryId String @map("category_id") @db.Uuid
   locationId String @map("location_id") @db.Uuid
+  // Free-text sub-area within the job's emirate (e.g. "Al Quoz",
+  // "Al Karama") — deliberately NOT a foreign key into `locations`.
+  // `locations` is restricted to exactly the 7 emirates (the dropdown
+  // options), while this is an admin-typed string with no dedicated
+  // management UI, no slug, and no uniqueness constraint: it exists
+  // purely as extra display detail on the job card/listing, not as
+  // reference data other jobs are grouped or filtered by.
+  area       String?
 
   title           String
   description     String  @db.Text

@@ -6,6 +6,7 @@ import {
   SalaryBadge,
 } from "@/components/jobs/job-meta-badges";
 import { cn } from "@/lib/utils";
+import { formatJobLocation } from "@/utils/format";
 import type { JobWithRelations } from "@/services/jobs.service";
 
 /**
@@ -19,7 +20,7 @@ export function JobMeta({ job, className }: { job: JobWithRelations; className?:
       <EmploymentTypeBadge type={job.employmentType} />
       <SalaryBadge min={job.salaryMin} max={job.salaryMax} currency={job.salaryCurrency} />
       <ExperienceBadge experience={job.experience} />
-      <LocationBadge location={job.location.name} />
+      <LocationBadge location={formatJobLocation(job)} />
       {job.publishedAt && <PostedTimeBadge date={job.publishedAt} />}
     </div>
   );

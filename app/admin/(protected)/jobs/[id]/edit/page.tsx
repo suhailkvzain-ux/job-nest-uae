@@ -28,6 +28,7 @@ function toDefaultValues(job: JobWithRelations): Partial<CreateJobInput> {
     companyId: job.companyId,
     categoryId: job.categoryId,
     locationId: job.locationId,
+    area: job.area,
     employmentType: job.employmentType,
     experience: job.experience,
     salaryMin: job.salaryMin,

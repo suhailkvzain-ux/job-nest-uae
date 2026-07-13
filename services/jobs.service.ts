@@ -61,7 +61,11 @@ export type JobWithRelations = Prisma.JobGetPayload<{ include: typeof jobWithRel
  * companies/locations don't immediately collide into "-2"/"-3" suffixes.
  * Only used when the admin hasn't provided a manual `slug` override.
  */
-async function buildDefaultJobSlugBase(input: { title: string; companyId: string; locationId: string }): Promise<string> {
+async function buildDefaultJobSlugBase(input: {
+  title: string;
+  companyId: string;
+  locationId: string;
+}): Promise<string> {
   const [company, location] = await Promise.all([
     prisma.company.findUnique({ where: { id: input.companyId } }),
     prisma.location.findUnique({ where: { id: input.locationId } }),
@@ -309,7 +313,11 @@ export async function getRelatedJobs(jobId: string, take = 6): Promise<JobWithRe
       id: { not: jobId },
       status: "PUBLISHED",
       ...ACTIVE_JOB_WHERE,
-      OR: [{ categoryId: job.categoryId }, { locationId: job.locationId }, { companyId: job.companyId }],
+      OR: [
+        { categoryId: job.categoryId },
+        { locationId: job.locationId },
+        { companyId: job.companyId },
+      ],
       AND: [notExpiredWhere()],
     },
     include: jobWithRelations,
@@ -499,8 +507,15 @@ async function paginateJobs(
 }
 
 /** Keyword-first search — powers the homepage/header search bar. */
-export async function searchJobs(input: JobSearchInput): Promise<PaginatedResult<JobWithRelations>> {
-  return paginateJobs(buildJobWhere(input), buildJobOrderBy(input.sort), input.page, input.pageSize);
+export async function searchJobs(
+  input: JobSearchInput,
+): Promise<PaginatedResult<JobWithRelations>> {
+  return paginateJobs(
+    buildJobWhere(input),
+    buildJobOrderBy(input.sort),
+    input.page,
+    input.pageSize,
+  );
 }
 
 /**
@@ -511,13 +526,22 @@ export async function searchJobs(input: JobSearchInput): Promise<PaginatedResult
  * window, status) is covered by `buildJobWhere`, and sort order by
  * `buildJobOrderBy`.
  */
-export async function filterJobs(input: JobSearchInput): Promise<PaginatedResult<JobWithRelations>> {
-  return paginateJobs(buildJobWhere(input), buildJobOrderBy(input.sort), input.page, input.pageSize);
+export async function filterJobs(
+  input: JobSearchInput,
+): Promise<PaginatedResult<JobWithRelations>> {
+  return paginateJobs(
+    buildJobWhere(input),
+    buildJobOrderBy(input.sort),
+    input.page,
+    input.pageSize,
+  );
 }
 
 /** Total published, non-deleted job count — the /jobs page header's live counter. */
 export async function getPublishedJobsCount(): Promise<number> {
-  return prisma.job.count({ where: { status: "PUBLISHED", ...ACTIVE_JOB_WHERE, ...notExpiredWhere() } });
+  return prisma.job.count({
+    where: { status: "PUBLISHED", ...ACTIVE_JOB_WHERE, ...notExpiredWhere() },
+  });
 }
 
 /**
@@ -536,21 +560,37 @@ export async function getPublishedJobsCount(): Promise<number> {
  */
 export async function getDistinctEducationValues(): Promise<string[]> {
   const rows = await prisma.job.findMany({
-    where: { status: "PUBLISHED", education: { not: null }, ...ACTIVE_JOB_WHERE, ...notExpiredWhere() },
+    where: {
+      status: "PUBLISHED",
+      education: { not: null },
+      ...ACTIVE_JOB_WHERE,
+      ...notExpiredWhere(),
+    },
     select: { education: true },
     distinct: ["education"],
   });
-  return rows.map((r) => r.education).filter((v): v is string => Boolean(v)).sort();
+  return rows
+    .map((r) => r.education)
+    .filter((v): v is string => Boolean(v))
+    .sort();
 }
 
 /** Distinct, non-empty `visaStatus` values among published jobs — powers the Visa Status filter. Same `distinct`-pushed-to-the-database approach as `getDistinctEducationValues()` above. */
 export async function getDistinctVisaStatusValues(): Promise<string[]> {
   const rows = await prisma.job.findMany({
-    where: { status: "PUBLISHED", visaStatus: { not: null }, ...ACTIVE_JOB_WHERE, ...notExpiredWhere() },
+    where: {
+      status: "PUBLISHED",
+      visaStatus: { not: null },
+      ...ACTIVE_JOB_WHERE,
+      ...notExpiredWhere(),
+    },
     select: { visaStatus: true },
     distinct: ["visaStatus"],
   });
-  return rows.map((r) => r.visaStatus).filter((v): v is string => Boolean(v)).sort();
+  return rows
+    .map((r) => r.visaStatus)
+    .filter((v): v is string => Boolean(v))
+    .sort();
 }
 
 /**
@@ -568,7 +608,9 @@ export async function getDistinctVisaStatusValues(): Promise<string[]> {
  * when crawled, which is exactly the kind of "submitted URL not found"
  * Search Console error a sitemap should never cause.
  */
-export async function getAllPublishedJobSlugsForSitemap(): Promise<{ slug: string; updatedAt: Date }[]> {
+export async function getAllPublishedJobSlugsForSitemap(): Promise<
+  { slug: string; updatedAt: Date }[]
+> {
   return prisma.job.findMany({
     where: { status: "PUBLISHED", ...ACTIVE_JOB_WHERE, ...notExpiredWhere() },
     select: { slug: true, updatedAt: true },
@@ -730,7 +772,10 @@ export async function getScheduledJobsForAdmin(take = 5): Promise<JobWithRelatio
 }
 
 /** Published jobs whose `applicationDeadline` falls within the next `withinDays` — the dashboard's "Jobs Near Deadline" alert. */
-export async function getJobsNearDeadlineForAdmin(withinDays = 3, take = 5): Promise<JobWithRelations[]> {
+export async function getJobsNearDeadlineForAdmin(
+  withinDays = 3,
+  take = 5,
+): Promise<JobWithRelations[]> {
   const now = new Date();
   const cutoff = new Date(now.getTime() + withinDays * 24 * 60 * 60 * 1000);
 
@@ -821,7 +866,9 @@ function buildAdminJobOrderBy(sort: AdminJobSort): Prisma.JobOrderByWithRelation
 }
 
 /** The admin Jobs table's one and only query — every status, searchable, filterable, sortable, paginated. */
-export async function getAdminJobsList(input: AdminJobSearchInput): Promise<PaginatedResult<JobWithRelations>> {
+export async function getAdminJobsList(
+  input: AdminJobSearchInput,
+): Promise<PaginatedResult<JobWithRelations>> {
   const where = buildAdminJobWhere(input);
   const orderBy = buildAdminJobOrderBy(input.sort);
 

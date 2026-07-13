@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import type { JobWithRelations } from "@/services/jobs.service";
-import { formatDate, formatPostedTime } from "@/utils/format";
+import { formatDate, formatJobLocation, formatPostedTime } from "@/utils/format";
 
 /**
  * The admin Jobs data table — row-selection checkboxes,
@@ -201,7 +201,7 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
                 <td className="max-w-36 truncate py-3 pr-4 text-muted-foreground">
                   {job.category.name}
                 </td>
-                <td className="py-3 pr-4 text-muted-foreground">{job.location.name}</td>
+                <td className="py-3 pr-4 text-muted-foreground">{formatJobLocation(job)}</td>
                 <td className="py-3 pr-4">
                   <EmploymentTypeBadge type={job.employmentType} />
                 </td>

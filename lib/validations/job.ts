@@ -36,13 +36,19 @@ const baseJobFields = {
   companyId: z.string().uuid("companyId must be a valid UUID"),
   categoryId: z.string().uuid("categoryId must be a valid UUID"),
   locationId: z.string().uuid("locationId must be a valid UUID"),
+  // Free-text sub-area within the emirate (e.g. "Al Quoz") — not tied to `locations`, see prisma/schema.prisma's Job.area doc comment.
+  area: z.string().trim().max(150).optional().nullable(),
 
   employmentType: employmentTypeEnum,
   experience: z.string().trim().max(100).optional().nullable(),
 
   salaryMin: z.coerce.number().int().nonnegative().optional().nullable(),
   salaryMax: z.coerce.number().int().nonnegative().optional().nullable(),
-  salaryCurrency: z.string().trim().length(3, "Use a 3-letter ISO currency code, e.g. AED").default("AED"),
+  salaryCurrency: z
+    .string()
+    .trim()
+    .length(3, "Use a 3-letter ISO currency code, e.g. AED")
+    .default("AED"),
 
   education: z.string().trim().max(150).optional().nullable(),
   visaStatus: z.string().trim().max(150).optional().nullable(),
@@ -58,14 +64,24 @@ const baseJobFields = {
   featured: z.boolean().default(false),
   verified: z.boolean().default(false),
 
-  metaTitle: z.string().trim().max(70, "Keep meta titles under ~70 characters for SEO").optional().nullable(),
+  metaTitle: z
+    .string()
+    .trim()
+    .max(70, "Keep meta titles under ~70 characters for SEO")
+    .optional()
+    .nullable(),
   metaDescription: z
     .string()
     .trim()
     .max(160, "Keep meta descriptions under ~160 characters for SEO")
     .optional()
     .nullable(),
-  ogTitle: z.string().trim().max(70, "Keep Open Graph titles under ~70 characters").optional().nullable(),
+  ogTitle: z
+    .string()
+    .trim()
+    .max(70, "Keep Open Graph titles under ~70 characters")
+    .optional()
+    .nullable(),
   ogDescription: z
     .string()
     .trim()
@@ -109,7 +125,14 @@ export type UpdateJobInput = z.infer<typeof updateJobSchema>;
 export const postedWithinEnum = z.enum(["today", "3days", "week", "month"]);
 export type PostedWithin = z.infer<typeof postedWithinEnum>;
 
-export const jobSortEnum = z.enum(["newest", "oldest", "salary_desc", "salary_asc", "az", "featured_first"]);
+export const jobSortEnum = z.enum([
+  "newest",
+  "oldest",
+  "salary_desc",
+  "salary_asc",
+  "az",
+  "featured_first",
+]);
 export type JobSort = z.infer<typeof jobSortEnum>;
 
 /**
