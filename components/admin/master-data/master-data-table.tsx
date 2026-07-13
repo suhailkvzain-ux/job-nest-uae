@@ -51,24 +51,21 @@ export function MasterDataTable({
   return (
     <div className="overflow-x-auto rounded-2xl border border-border/60">
       <table className="w-full min-w-[720px] text-left text-sm">
-        <thead>
+        <thead className="bg-card">
           <tr className="border-b border-border/60 text-xs uppercase tracking-wide text-muted-foreground">
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pl-4 pr-4 font-medium">
+            <th scope="col" className="py-3 pl-4 pr-4 font-medium">
               {entityLabel} Name
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               Slug
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               Number of Jobs
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               Created Date
             </th>
-            <th
-              scope="col"
-              className="sticky top-16 z-dropdown bg-card py-3 pl-4 pr-4 text-right font-medium"
-            >
+            <th scope="col" className="py-3 pl-4 pr-4 text-right font-medium">
               Actions
             </th>
           </tr>

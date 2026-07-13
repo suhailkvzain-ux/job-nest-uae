@@ -30,7 +30,7 @@ import type { JobWithRelations } from "@/services/jobs.service";
 import { formatDate, formatPostedTime } from "@/utils/format";
 
 /**
- * The admin Jobs data table — sticky header, row-selection checkboxes,
+ * The admin Jobs data table — row-selection checkboxes,
  * and the bulk-action toolbar, all in one Client Component since the
  * toolbar and the checkboxes share the same `selectedIds` state.
  * Sorting/filtering/pagination stay server-side/URL-driven (handled by
@@ -130,52 +130,49 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
 
       <div className="overflow-x-auto rounded-2xl border border-border/60">
         <table className="w-full min-w-[1100px] text-left text-sm">
-          <thead>
+          <thead className="bg-card">
             <tr className="border-b border-border/60 text-xs uppercase tracking-wide text-muted-foreground">
-              <th scope="col" className="sticky top-16 z-dropdown w-10 bg-card py-3 pl-4">
+              <th scope="col" className="w-10 py-3 pl-4">
                 <Checkbox
                   checked={allSelected}
                   onCheckedChange={toggleAll}
                   aria-label="Select all jobs on this page"
                 />
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Job Title
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Company
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Category
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Location
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Type
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Status
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Featured
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Verified
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Published
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Deadline
               </th>
-              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Last Updated
               </th>
-              <th
-                scope="col"
-                className="sticky top-16 z-dropdown bg-card py-3 pl-4 pr-4 text-right font-medium"
-              >
+              <th scope="col" className="py-3 pl-4 pr-4 text-right font-medium">
                 Actions
               </th>
             </tr>

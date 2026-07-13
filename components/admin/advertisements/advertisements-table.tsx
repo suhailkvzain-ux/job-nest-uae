@@ -41,39 +41,36 @@ export function AdvertisementsTable({
   return (
     <div className="overflow-x-auto rounded-2xl border border-border/60">
       <table className="w-full min-w-[1000px] text-left text-sm">
-        <thead>
+        <thead className="bg-card">
           <tr className="border-b border-border/60 text-xs uppercase tracking-wide text-muted-foreground">
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pl-4 pr-4 font-medium">
+            <th scope="col" className="py-3 pl-4 pr-4 font-medium">
               Advertisement Name
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               Position
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               Device
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               Type
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               Status
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               Impressions
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               Clicks
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               CTR
             </th>
-            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+            <th scope="col" className="py-3 pr-4 font-medium">
               Created Date
             </th>
-            <th
-              scope="col"
-              className="sticky top-16 z-dropdown bg-card py-3 pl-4 pr-4 text-right font-medium"
-            >
+            <th scope="col" className="py-3 pl-4 pr-4 text-right font-medium">
               Actions
             </th>
           </tr>
