@@ -118,7 +118,6 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 31536000,
   },
   experimental: {
-    typedRoutes: true,
     serverActions: {
       allowedOrigins: serverActionAllowedOrigins(),
     },

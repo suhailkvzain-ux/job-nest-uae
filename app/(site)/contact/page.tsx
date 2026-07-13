@@ -1,6 +1,5 @@
 import { Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Container } from "@/components/layout/container";
@@ -90,14 +89,14 @@ export default async function ContactPage() {
                     </span>
                     <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</span>
                     {href ? (
-                      <Link
+                      <a
                         href={href}
                         target={href.startsWith("http") ? "_blank" : undefined}
                         rel={href.startsWith("http") ? "noreferrer noopener" : undefined}
                         className="text-sm font-medium text-foreground hover:text-primary"
                       >
                         {value}
-                      </Link>
+                      </a>
                     ) : (
                       <span className="text-sm font-medium text-foreground">{value}</span>
                     )}
