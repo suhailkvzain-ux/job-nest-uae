@@ -2,16 +2,17 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 
-// Branding uploads do real work per request (signature-check the bytes,
-// resize with sharp, upload to Supabase Storage) — comfortably fast on
-// a warm connection, but the platform's default server-action time
-// budget can be tight for a large source image on a cold/slow
-// connection. Raising it here (rather than leaving the platform
-// default) is what actually fixes an upload that used to time out
-// mid-request with no error surfaced to the admin — see
-// `uploadBrandingAssetAction` below and the client-side timeout in
-// `BrandingUploadField` for the other half of that fix.
-export const maxDuration = 30;
+// NOTE: `export const maxDuration` was tried here to extend the
+// branding-upload action's execution budget, but Next.js's "use server"
+// file convention only allows async function exports — any other
+// export (including route-segment config like `maxDuration`) fails the
+// whole build ("Only async functions are allowed to be exported in a
+// 'use server' file"). Route segment config only works in
+// page/layout/route.ts files, not in standalone server-action modules
+// like this one, so that idea doesn't apply here. The other half of
+// the upload-timeout fix — the client-side try/catch + timeout in
+// `BrandingUploadField` — still stands on its own and is what actually
+// prevents the "stuck forever" symptom regardless of server duration.
 
 import { assertAdminAndRateLimit, flattenZodErrors } from "@/lib/admin-action-helpers";
 import { uploadBrandingAsset } from "@/lib/branding-storage";
