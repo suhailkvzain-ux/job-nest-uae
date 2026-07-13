@@ -1,0 +1,483 @@
+// ─────────────────────────────────────────────────────────────
+// Job Nest UAE — Database Schema (Phase 2)
+//
+// Job Nest UAE is a JOB DISCOVERY platform, not a recruitment site:
+// there are no candidate/recruiter accounts, no applications, no resume
+// uploads, no messaging, no subscriptions. A single Admin manages every
+// listing. Users always leave the site to apply, via `officialWebsite`
+// or `officialEmail` on a Job.
+//
+// IDs use Postgres-native UUIDs (`gen_random_uuid()`, via the pgcrypto
+// extension) rather than Prisma's client-side `cuid()`/`uuid()`, so rows
+// inserted from anywhere (Supabase Studio, SQL, a future Edge Function)
+// get a correct default — matching how the rest of a Supabase project
+// (auth.users, storage) already generates IDs.
+// ─────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────────────────────
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  TEMPORARY
+  INTERNSHIP
+  REMOTE
+  HYBRID
+  FREELANCE
+
+  @@map("employment_type")
+}
+
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+
+  @@map("job_status")
+}
+
+enum AdvertisementPosition {
+  TOP_BANNER
+  MIDDLE_BANNER
+  BOTTOM_BANNER
+  DESKTOP_SIDEBAR
+  MOBILE_BANNER
+  HOMEPAGE_HERO
+  HOMEPAGE_MIDDLE
+  HOMEPAGE_FOOTER
+  JOBS_LISTING_TOP
+  JOBS_LISTING_MIDDLE
+  JOBS_LISTING_BOTTOM
+  SINGLE_JOB_TOP
+  SINGLE_JOB_MIDDLE
+  SINGLE_JOB_BOTTOM
+  COMPANY_PAGE
+  CATEGORY_PAGE
+  LOCATION_PAGE
+
+  @@map("advertisement_position")
+}
+
+// Which device bucket an ad should render for — `ALL` shows on every device. Mirrors the site's existing `sm:` breakpoint convention: `DESKTOP` covers tablet + desktop, `MOBILE` covers below that.
+enum AdDevice {
+  DESKTOP
+  MOBILE
+  ALL
+
+  @@map("ad_device")
+}
+
+// What kind of creative this ad row renders. `Disabled` from the spec's Ad Types list is represented separately by `Advertisement.status`, not a 4th value here — see the model comment below.
+enum AdType {
+  ADSENSE
+  CUSTOM_HTML
+  IMAGE_BANNER
+
+  @@map("ad_type")
+}
+
+enum AdStatus {
+  ACTIVE
+  DISABLED
+
+  @@map("ad_status")
+}
+
+//
+// Phase 12 Analytics Dashboard — every trackable public-site event.
+// `PAGE_VIEW` is generic (any route); `JOB_VIEW`/`WEBSITE_CLICK`/
+// `EMAIL_CLICK`/`SHARE_CLICK` mirror the per-job lifetime counters
+// already on `Analytics`, recorded a second time here (dual-write) so
+// they can also be sliced by date/device/referrer instead of only ever
+// read as a running total. `SEARCH_QUERY` is the spec's explicitly
+// "optional" one, best-effort captured from the /jobs search box.
+//
+enum AnalyticsEventType {
+  PAGE_VIEW
+  JOB_VIEW
+  WEBSITE_CLICK
+  EMAIL_CLICK
+  SHARE_CLICK
+  SEARCH_QUERY
+
+  @@map("analytics_event_type")
+}
+
+// Coarse device bucket derived server-side from the request's `User-Agent` header — no client-side fingerprinting.
+enum DeviceType {
+  DESKTOP
+  MOBILE
+  UNKNOWN
+
+  @@map("device_type")
+}
+
+// The five Recent Activity timeline entries the spec calls for.
+enum ActivityAction {
+  JOB_PUBLISHED
+  JOB_UPDATED
+  JOB_ARCHIVED
+  JOB_DELETED
+  JOB_CREATED
+  ADVERTISEMENT_UPDATED
+  ADMIN_LOGIN
+  ADMIN_LOGOUT
+  SETTINGS_UPDATED
+
+  @@map("activity_action")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Admin — single admin manages the entire site. No roles/permissions
+// table: the product has exactly one operator by design.
+// ─────────────────────────────────────────────────────────────
+model Admin {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("admins")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Company — the employer a job posting belongs to. Companies never
+// log in; this is reference data the Admin maintains.
+// ─────────────────────────────────────────────────────────────
+model Company {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  slug        String   @unique
+  website     String?
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  jobs Job[]
+
+  // `slug` is already indexed via @unique above; `name` gets its own
+  // index since companies are frequently listed/sorted/searched by name.
+  @@index([name])
+  @@map("companies")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Category — job function/industry taxonomy (e.g. "Marketing", "IT").
+// ─────────────────────────────────────────────────────────────
+model Category {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  slug        String   @unique
+  // Optional admin-authored blurb — added in Phase 10's Master Data
+  // Management module. Never rendered on the public site (which only
+  // ever showed name/slug/job-count), purely an admin-facing note.
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  jobs Job[]
+
+  @@index([name])
+  @@map("categories")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Location — UAE emirate/city a job is based in. Seeded with the 7
+// emirates + Al Ain (see prisma/seed.ts).
+// ─────────────────────────────────────────────────────────────
+model Location {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  slug        String   @unique
+  // Same rationale as Category.description above — admin-facing only.
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  jobs Job[]
+
+  @@index([name])
+  @@map("locations")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Job — the core listing. Soft-deleted via `deletedAt`; every read
+// helper in services/jobs.service.ts filters `deletedAt: null` so
+// deleted jobs never surface on the public site (see ACTIVE_JOB_WHERE
+// in that file — this is enforced in application code rather than a
+// database trigger, keeping the "what got filtered and why" visible
+// in one place).
+// ─────────────────────────────────────────────────────────────
+model Job {
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug   String @unique
+
+  companyId  String @map("company_id") @db.Uuid
+  categoryId String @map("category_id") @db.Uuid
+  locationId String @map("location_id") @db.Uuid
+
+  title           String
+  description     String  @db.Text
+  responsibilities String? @db.Text
+  requirements    String? @db.Text
+  benefits        String? @db.Text
+
+  employmentType EmploymentType @map("employment_type")
+  experience     String?
+
+  salaryMin      Int?    @map("salary_min")
+  salaryMax      Int?    @map("salary_max")
+  salaryCurrency String  @default("AED") @map("salary_currency")
+
+  education   String?
+  visaStatus  String?  @map("visa_status")
+  nationality String?
+  languages   String[]
+  vacancies   Int      @default(1)
+
+  officialWebsite     String?   @map("official_website")
+  officialEmail       String?   @map("official_email")
+  applicationDeadline DateTime? @map("application_deadline")
+
+  status   JobStatus @default(DRAFT)
+  featured Boolean   @default(false)
+  verified Boolean   @default(false)
+
+  metaTitle       String? @map("meta_title")
+  metaDescription String? @map("meta_description")
+  // Open Graph overrides — independent of metaTitle/metaDescription since
+  // a punchier OG title/description sometimes differs from what's best
+  // for a <title> tag or a Google snippet. Added in Phase 9 alongside the
+  // admin job form's SEO section. Canonical URL is deliberately NOT a
+  // column here: a job posting's canonical is always `/jobs/{slug}`, so
+  // it's computed from the slug rather than stored redundantly.
+  ogTitle         String? @map("og_title")
+  ogDescription   String? @db.Text @map("og_description")
+
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  company   Company    @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  category  Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  location  Location   @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  analytics Analytics?
+
+  // Requested single-column indexes (slug is already unique-indexed above).
+  @@index([status])
+  @@index([publishedAt])
+  @@index([locationId])
+  @@index([categoryId])
+  @@index([companyId])
+  @@index([featured])
+  @@index([verified])
+  // Composite indexes matching the platform's actual hot-path queries —
+  // "published jobs, newest first" and "featured jobs" both filter on
+  // status before sorting/filtering further.
+  @@index([status, publishedAt])
+  @@index([status, featured])
+  @@index([status, deletedAt])
+  // Phase 15: composite indexes matching /jobs' other two sort options
+  // (Highest Salary, A–Z) — each still filters on `status` first, so
+  // without a matching composite index Postgres can use the plain
+  // `status` index to filter but must still sort the matching rows in
+  // memory. Indexing `(status, <sort column>)` lets it satisfy both the
+  // filter and the ORDER BY from the same index scan.
+  @@index([status, salaryMax])
+  @@index([status, salaryMin])
+  @@index([status, title])
+  @@map("jobs")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Advertisement — Phase 11 Advertisement Manager. One row per ad unit;
+// `position` + `device` together decide where/when it's eligible to
+// render (see `services/advertisements.service.ts`'s `getAdsForSlot()`
+// and `components/ads/ad-slot.tsx`). `adType` decides which creative
+// fields matter — only one of (adsenseClient+adsenseSlot) / htmlCode /
+// (imageUrl+targetUrl) is populated per row, enforced at the Zod layer
+// (`lib/validations/advertisement.ts`) rather than the database, the
+// same cross-field-conditional pattern already used for Job's
+// officialWebsite/officialEmail. `status` (not a 4th `adType` value) is
+// the single on/off switch — see that enum's doc comment.
+// ─────────────────────────────────────────────────────────────
+model Advertisement {
+  id   String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String
+
+  position AdvertisementPosition
+  device   AdDevice              @default(ALL)
+  adType   AdType                @default(CUSTOM_HTML) @map("ad_type")
+  status   AdStatus              @default(ACTIVE)
+
+  // Google AdSense
+  adsenseClient String? @map("adsense_client")
+  adsenseSlot   String? @map("adsense_slot")
+
+  // Custom HTML (also how Google Ad Manager / any future network's
+  // provided embed snippet is supported — see the README's Phase 11
+  // section for why there's no separate "Ad Manager" adType).
+  htmlCode String? @map("html_code") @db.Text
+
+  // Image Banner
+  imageUrl  String? @map("image_url")
+  targetUrl String? @map("target_url")
+  width     Int?
+  height    Int?
+
+  displayOrder Int       @default(0) @map("display_order")
+  startDate    DateTime? @map("start_date")
+  endDate      DateTime? @map("end_date")
+
+  // Lifetime counters, incremented in place — same "no per-event log
+  // table" trade-off Analytics already makes for Job views/clicks.
+  // CTR is computed from these, never stored.
+  impressions Int @default(0)
+  clicks      Int @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([position])
+  @@index([status])
+  @@index([position, device, status])
+  @@map("advertisements")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Analytics — one row per job, counters incremented in place (no
+// per-event log table at this stage — sufficient for "views / clicks
+// per job" without the storage cost of row-per-event tracking).
+// ─────────────────────────────────────────────────────────────
+model Analytics {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId         String   @unique @map("job_id") @db.Uuid
+  views         Int      @default(0)
+  websiteClicks Int      @default(0) @map("website_clicks")
+  emailClicks   Int      @default(0) @map("email_clicks")
+  shareClicks   Int      @default(0) @map("share_clicks")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@map("analytics")
+}
+
+// ─────────────────────────────────────────────────────────────
+// AnalyticsEvent — Phase 12 Analytics Dashboard. One row per trackable
+// event, the time-series counterpart to `Analytics`'s lifetime
+// counters. This is deliberately a plain event log (no aggregation
+// tables) — the volume a job-discovery site like this generates is
+// nowhere near what would need pre-aggregated rollups, so every chart
+// and KPI in `services/analytics.service.ts` queries this table
+// directly, indexed for exactly that access pattern (`type` + a date
+// range, optionally narrowed to one `jobId`).
+//
+// `jobId` has no foreign-key relation on purpose: a job can be
+// soft-deleted (or, via `Admin.deleteJob`, still exist with
+// `deletedAt` set) long after its view/click history should remain
+// queryable, and an FK with `onDelete: Cascade` would silently erase
+// that history the moment a job is deleted — the opposite of what an
+// analytics/audit trail is for. Historical events for a since-deleted
+// job intentionally keep showing under whatever title was live in the
+// admin list at the time (see `ActivityLog` below for the same
+// reasoning applied to the activity timeline).
+// ─────────────────────────────────────────────────────────────
+model AnalyticsEvent {
+  id     String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type   AnalyticsEventType
+  jobId  String?            @map("job_id") @db.Uuid
+  path   String?
+  searchQuery String?       @map("search_query")
+  deviceType  DeviceType    @default(UNKNOWN) @map("device_type")
+  referrer    String?
+  // Anonymous, first-party, no-PII identifier (see `lib/visitor-id.ts`)
+  // — lets "Total/Today/Week/Month Visitors" count distinct visitors
+  // rather than raw page-view events. Not a user account of any kind;
+  // this project still has none.
+  visitorId String? @map("visitor_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([type, createdAt])
+  @@index([jobId])
+  @@index([visitorId])
+  @@index([createdAt])
+  @@map("analytics_events")
+}
+
+// ─────────────────────────────────────────────────────────────
+// ActivityLog — Phase 12's Recent Activity timeline. Denormalized by
+// design: `entityLabel` snapshots the job title / advertisement name
+// at the moment of the action, rather than joining to a live Job/
+// Advertisement row, so the timeline still reads correctly after a
+// "Job Deleted" entry's own job no longer exists (or an Advertisement
+// row was hard-deleted, per Phase 11's design). Audit/activity logs
+// conventionally denormalize exactly this way for the same reason.
+// ─────────────────────────────────────────────────────────────
+model ActivityLog {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  action      ActivityAction
+  entityLabel String         @map("entity_label")
+  // The acting administrator's email — Phase 16 addition. Nullable
+  // rather than required so pre-existing rows (written before this
+  // column existed) still read back cleanly; every write from this
+  // phase onward always sets it via `requireAdmin()`'s returned user.
+  // Denormalized (not a foreign key into `Admin`, which itself isn't
+  // even the table real auth uses — see Supabase Auth) for the exact
+  // same "must still read correctly forever" reason `entityLabel`
+  // already is.
+  adminEmail  String?        @map("admin_email")
+  createdAt   DateTime       @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("activity_log")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Setting — Phase 13's Website Settings & System Configuration.
+// Deliberately a flexible key/value store rather than one wide table
+// with a fixed column per field: ~35 settings across 8 sections (many
+// optional, several booleans/numbers/URLs) would make a single-row
+// "Settings" table an ever-growing, awkward-to-migrate wall of nullable
+// columns every time a future phase adds one more field. Key/value
+// means adding a setting is a data change, not a schema migration.
+// `type` records how `value` (always stored as text) should be parsed
+// back — `getSetting()` in `services/settings.service.ts` is the one
+// place that coercion happens, so every call site gets a real
+// string/number/boolean instead of manually parsing text everywhere.
+// ─────────────────────────────────────────────────────────────
+enum SettingType {
+  STRING
+  NUMBER
+  BOOLEAN
+  JSON
+
+  @@map("setting_type")
+}
+
+model Setting {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key       String      @unique @map("setting_key")
+  value     String?     @map("setting_value") @db.Text
+  type      SettingType @default(STRING) @map("setting_type")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@map("settings")
+}

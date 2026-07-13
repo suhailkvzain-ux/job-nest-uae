@@ -1,0 +1,3 @@
+# Static assets (favicons, og-image.png, icon-192.png, icon-512.png, logos)
+# go here. Add them before the SEO metadata / manifest references resolve
+# to real files.

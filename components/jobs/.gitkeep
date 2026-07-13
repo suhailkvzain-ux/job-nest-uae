@@ -1,0 +1,2 @@
+# Reserved for job-listing components (JobCard, JobList, JobFilters, ...),
+# added once the Prisma schema + job pages are built in the next phase.
