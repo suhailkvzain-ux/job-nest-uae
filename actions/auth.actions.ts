@@ -1,5 +1,6 @@
 "use server";
 
+import type { Route } from "next";
 import { redirect } from "next/navigation";
 
 import { assertSameOrigin } from "@/lib/csrf";
@@ -74,7 +75,7 @@ export async function signInAction(_prevState: SignInState, formData: FormData):
 
   void logActivity("ADMIN_LOGIN", data.user.email ?? adminEmail ?? "unknown");
 
-  redirect(safeAdminRedirect(formData.get("redirectTo")));
+  redirect(safeAdminRedirect(formData.get("redirectTo")) as Route);
 }
 
 /**
