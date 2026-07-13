@@ -6,7 +6,9 @@
    Job Nest UAE — Design Tokens
    Apple / Linear / Stripe Dashboard / Vercel / Notion inspired:
    white canvas, blue gradient accent, glassmorphism, soft shadows,
-   generous radius, dark text only (no dark mode yet).
+   generous radius. A parallel `.dark` token set (below) mirrors every
+   variable here for night mode, toggled by `next-themes` adding/removing
+   the `dark` class on <html> (see `components/providers/theme-provider.tsx`).
    All colors are HSL channel triples (no "hsl()" wrapper) so Tailwind's
    `hsl(var(--x) / <alpha-value>)` opacity syntax works.
    ───────────────────────────────────────────────────────────── */
@@ -78,12 +80,74 @@
 }
 
 @layer base {
+  /* Night mode — same structure as :root above, re-tuned for a dark
+     canvas rather than every value being independently designed: dark
+     surfaces get a subtle blue-slate tint (matching the brand hue)
+     instead of true black, text swaps to a soft off-white (never pure
+     white, easier on the eyes), and the badge palette flips from
+     "light pastel bg + dark text" to "deep tinted bg + light text" so
+     badges keep the same at-a-glance meaning in both themes. */
+  .dark {
+    --background: 222 47% 7%;
+    --foreground: 210 40% 98%;
+
+    --surface: 222 40% 10%;
+
+    --card: 222 44% 9%;
+    --card-foreground: 210 40% 98%;
+
+    --muted: 217 33% 15%;
+    --muted-foreground: 215 20% 65%;
+
+    --border: 217 33% 18%;
+    --input: 217 33% 18%;
+    --ring: 217 91% 65%;
+
+    --text-primary: 210 40% 98%;
+    --text-secondary: 215 20% 65%;
+
+    --primary: 217 91% 63%;
+    --primary-foreground: 222 47% 9%;
+    --primary-hover: 217 91% 70%;
+    --brand-start: 217 91% 63%;
+    --brand-end: 199 89% 55%;
+
+    --secondary: 217 33% 15%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 199 89% 58%;
+    --accent-foreground: 222 47% 9%;
+
+    --destructive: 0 72% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 55% 48%;
+    --success-foreground: 222 47% 9%;
+
+    --warning: 38 92% 58%;
+    --warning-foreground: 26 60% 12%;
+
+    --badge-blue: 217 50% 20%;
+    --badge-blue-foreground: 217 91% 78%;
+    --badge-green: 152 40% 18%;
+    --badge-green-foreground: 152 60% 68%;
+    --badge-orange: 38 55% 18%;
+    --badge-orange-foreground: 38 92% 72%;
+    --badge-purple: 262 40% 22%;
+    --badge-purple-foreground: 262 75% 80%;
+    --badge-gray: 217 20% 20%;
+    --badge-gray-foreground: 215 20% 72%;
+  }
+}
+
+@layer base {
   * {
     @apply border-border;
   }
 
   html {
     scroll-behavior: smooth;
+    color-scheme: light dark;
   }
 
   body {
@@ -105,7 +169,7 @@
 @layer utilities {
   /* Reusable glassmorphism surface — sticky header, floating cards, etc. */
   .glass {
-    @apply border border-white/40 bg-white/70 shadow-glass backdrop-blur-xl;
+    @apply border border-white/40 bg-white/70 shadow-glass backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/70;
   }
 
   .glass-dark {
@@ -115,7 +179,7 @@
   /* Subtle glass card for surfaces resting on --surface / gradients rather
      than a sticky/floating element (softer than `.glass`). */
   .glass-card {
-    @apply border border-white/60 bg-white/60 shadow-soft backdrop-blur-md;
+    @apply border border-white/60 bg-white/60 shadow-soft backdrop-blur-md dark:border-white/10 dark:bg-slate-900/60;
   }
 
   /* Brand gradient text, e.g. for accenting a word in a headline */

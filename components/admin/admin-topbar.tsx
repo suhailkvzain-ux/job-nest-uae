@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 import { AdminLogoutButton } from "@/components/admin/admin-logout-button";
 import { AdminMobileSidebar } from "@/components/admin/admin-mobile-sidebar";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,6 +41,7 @@ export function AdminTopbar({ adminEmail }: { adminEmail: string }) {
       </div>
 
       <div className="flex items-center gap-2">
+        <ThemeToggle />
         <span className="hidden text-sm text-muted-foreground sm:inline">{adminEmail}</span>
 
         <DropdownMenu>

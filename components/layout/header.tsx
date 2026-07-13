@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Container } from "@/components/layout/container";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { mainNav } from "@/constants/nav";
 import { siteConfig } from "@/constants/site";
@@ -55,21 +56,25 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           <Link href="/jobs" className={cn(buttonVariants({ size: "lg", variant: "cta" }))}>
             Browse Jobs
           </Link>
         </div>
 
-        <button
-          type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted md:hidden"
-          onClick={() => setMobileOpen((open) => !open)}
-          aria-label="Toggle navigation menu"
-          aria-expanded={mobileOpen}
-        >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted md:hidden"
+            onClick={() => setMobileOpen((open) => !open)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </Container>
 
       {mobileOpen && (
