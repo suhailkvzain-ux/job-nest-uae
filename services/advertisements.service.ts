@@ -94,11 +94,6 @@ export async function incrementAdClick(id: string): Promise<void> {
 }
 
 /** CTR as a percentage, rounded to 2 decimals — `0` (not `NaN`/`Infinity`) when there have been no impressions yet. */
-export function computeCtr(impressions: number, clicks: number): number {
-  if (impressions <= 0) return 0;
-  return Math.round((clicks / impressions) * 10000) / 100;
-}
-
 // ─────────────────────────────────────────────────────────────
 // Admin list (`/admin/advertisements`)
 // ─────────────────────────────────────────────────────────────

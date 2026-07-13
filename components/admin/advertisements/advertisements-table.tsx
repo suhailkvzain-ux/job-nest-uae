@@ -5,8 +5,7 @@ import type { Advertisement } from "@prisma/client";
 import { AdRowActions } from "@/components/admin/advertisements/ad-row-actions";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { computeCtr } from "@/services/advertisements.service";
-import { formatDate, humanizeEnumValue } from "@/utils/format";
+import { computeCtr, formatDate, humanizeEnumValue } from "@/utils/format";
 
 interface AdvertisementsTableProps {
   ads: Advertisement[];

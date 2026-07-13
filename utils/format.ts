@@ -91,3 +91,9 @@ export function humanizeEnumValue(value: string): string {
 export function formatNumber(value: number): string {
   return new Intl.NumberFormat("en-AE").format(value);
 }
+
+/** Computes click-through rate as a percentage (2 decimal places) from impressions and clicks. */
+export function computeCtr(impressions: number, clicks: number): number {
+  if (impressions <= 0) return 0;
+  return Math.round((clicks / impressions) * 10000) / 100;
+}
