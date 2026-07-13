@@ -210,6 +210,10 @@ const config: Config = {
           from: { transform: "rotate(0deg)" },
           to: { transform: "rotate(360deg)" },
         },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -218,6 +222,7 @@ const config: Config = {
         "fade-in-up": "fade-in-up 0.5s ease-out",
         shimmer: "shimmer 2s infinite linear",
         "spin-slow": "spin-slow 1.2s linear infinite",
+        float: "float 4s ease-in-out infinite",
       },
     },
   },

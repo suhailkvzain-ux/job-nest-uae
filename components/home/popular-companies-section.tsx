@@ -1,4 +1,5 @@
 import { Building2 } from "lucide-react";
+import Link from "next/link";
 
 import { CompanyCard } from "@/components/cards/company-card";
 import { Container } from "@/components/layout/container";
@@ -8,6 +9,8 @@ import { StaggerContainer, StaggerItem } from "@/components/motion/motion-wrappe
 import { EmptyState } from "@/components/shared/empty-state";
 import { Heading } from "@/components/typography/heading";
 import { Paragraph } from "@/components/typography/text";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { CompanyWithJobCount } from "@/services/companies.service";
 
 /**
@@ -35,15 +38,23 @@ export function PopularCompaniesSection({ companies }: { companies: CompanyWithJ
             description="Companies with live vacancies will appear here."
           />
         ) : (
-          <StaggerContainer>
-            <Grid cols={{ base: 2, sm: 3, lg: 4 }} gap="md">
-              {companies.map((company) => (
-                <StaggerItem key={company.id}>
-                  <CompanyCard name={company.name} slug={company.slug} jobCount={company.jobCount} website={company.website} />
-                </StaggerItem>
-              ))}
-            </Grid>
-          </StaggerContainer>
+          <>
+            <StaggerContainer>
+              <Grid cols={{ base: 2, sm: 3, lg: 4 }} gap="md">
+                {companies.map((company) => (
+                  <StaggerItem key={company.id}>
+                    <CompanyCard name={company.name} slug={company.slug} jobCount={company.jobCount} website={company.website} />
+                  </StaggerItem>
+                ))}
+              </Grid>
+            </StaggerContainer>
+
+            <div className="flex justify-center">
+              <Link href="/companies" className={cn(buttonVariants({ variant: "outline", size: "lg" }))}>
+                View All Companies
+              </Link>
+            </div>
+          </>
         )}
       </Container>
     </Section>

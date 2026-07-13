@@ -13,17 +13,41 @@ export interface CategoryCardProps {
   description?: string | null;
   icon?: LucideIcon;
   className?: string;
+  /** Cycles the icon tile through the fixed badge palette so a grid of
+   * category cards reads as varied and colorful (à la a services grid)
+   * instead of every tile sharing one flat brand-tinted background. */
+  accent?: "blue" | "green" | "orange" | "purple";
 }
 
+const ACCENT_CLASSES: Record<NonNullable<CategoryCardProps["accent"]>, string> = {
+  blue: "bg-badge-blue text-badge-blue-foreground",
+  green: "bg-badge-green text-badge-green-foreground",
+  orange: "bg-badge-orange text-badge-orange-foreground",
+  purple: "bg-badge-purple text-badge-purple-foreground",
+};
+
 /** Category tile — links to `/categories/[slug]`. */
-export function CategoryCard({ name, slug, jobCount, description, icon: Icon = Briefcase, className }: CategoryCardProps) {
+export function CategoryCard({
+  name,
+  slug,
+  jobCount,
+  description,
+  icon: Icon = Briefcase,
+  className,
+  accent = "purple",
+}: CategoryCardProps) {
   return (
     <Link href={`/categories/${slug}`} className="block h-full">
-      <Card className={cn("group h-full transition-all hover:-translate-y-0.5 hover:shadow-soft-lg", className)}>
+      <Card className={cn("group h-full transition-all hover:-translate-y-1 hover:shadow-soft-lg", className)}>
         <CardContent className="flex h-full flex-col gap-4 p-6">
           <div className="flex items-start justify-between gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-gradient-soft text-primary transition-colors group-hover:bg-brand-gradient group-hover:text-primary-foreground">
-              <Icon className="h-5 w-5" />
+            <span
+              className={cn(
+                "flex h-11 w-11 items-center justify-center rounded-2xl transition-transform group-hover:scale-105",
+                ACCENT_CLASSES[accent],
+              )}
+            >
+              <Icon className="h-5 w-5" strokeWidth={2} />
             </span>
             <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
           </div>

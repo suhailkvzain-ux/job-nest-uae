@@ -1,4 +1,5 @@
 import { MapPinned } from "lucide-react";
+import Link from "next/link";
 
 import { LocationCard } from "@/components/cards/location-card";
 import { Container } from "@/components/layout/container";
@@ -8,9 +9,11 @@ import { StaggerContainer, StaggerItem } from "@/components/motion/motion-wrappe
 import { EmptyState } from "@/components/shared/empty-state";
 import { Heading } from "@/components/typography/heading";
 import { Paragraph } from "@/components/typography/text";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { LocationWithJobCount } from "@/services/locations.service";
 
-/** Homepage "Browse by Location" grid — the 7 emirates + Al Ain. */
+/** Homepage "Browse by Location" grid — the 7 emirates. */
 export function LocationGridSection({ locations }: { locations: LocationWithJobCount[] }) {
   return (
     <Section id="locations" aria-labelledby="locations-heading">
@@ -27,15 +30,23 @@ export function LocationGridSection({ locations }: { locations: LocationWithJobC
         {locations.length === 0 ? (
           <EmptyState icon={MapPinned} title="No locations yet" description="Locations will appear here once added." />
         ) : (
-          <StaggerContainer>
-            <Grid cols={{ base: 2, sm: 3, lg: 4 }} gap="md">
-              {locations.map((location) => (
-                <StaggerItem key={location.id}>
-                  <LocationCard name={location.name} slug={location.slug} jobCount={location.jobCount} />
-                </StaggerItem>
-              ))}
-            </Grid>
-          </StaggerContainer>
+          <>
+            <StaggerContainer>
+              <Grid cols={{ base: 2, sm: 3, lg: 4 }} gap="md">
+                {locations.map((location) => (
+                  <StaggerItem key={location.id}>
+                    <LocationCard name={location.name} slug={location.slug} jobCount={location.jobCount} />
+                  </StaggerItem>
+                ))}
+              </Grid>
+            </StaggerContainer>
+
+            <div className="flex justify-center">
+              <Link href="/locations" className={cn(buttonVariants({ variant: "outline", size: "lg" }))}>
+                View All Locations
+              </Link>
+            </div>
+          </>
         )}
       </Container>
     </Section>
