@@ -1,11 +1,12 @@
-import { Briefcase, Linkedin, Instagram, Twitter } from "lucide-react";
+import { Linkedin, Instagram, Twitter } from "lucide-react";
 import Link from "next/link";
 
 import { Container } from "@/components/layout/container";
+import { SiteBrandMark } from "@/components/shared/site-brand-mark";
 import { footerNav } from "@/constants/nav";
 import { siteConfig } from "@/constants/site";
 
-export function Footer() {
+export function Footer({ logoUrl }: { logoUrl?: string | null } = {}) {
   const year = new Date().getFullYear();
 
   return (
@@ -14,9 +15,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.5fr_1fr]">
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-              <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-soft">
-                <Briefcase className="h-4.5 w-4.5" strokeWidth={2.25} />
-              </span>
+              <SiteBrandMark logoUrl={logoUrl} name={siteConfig.name} />
               <span>{siteConfig.name}</span>
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
@@ -75,7 +74,10 @@ export function Footer() {
           <p>
             © {year} {siteConfig.name}. All rights reserved.
           </p>
-          <p>Job listings link out to employers&apos; official websites. Job Nest UAE is a discovery platform only.</p>
+          <p>
+            Job listings link out to employers&apos; official websites. Job Nest UAE is a discovery
+            platform only.
+          </p>
         </div>
       </Container>
     </footer>

@@ -1,11 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Menu, X, Briefcase } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 import { Container } from "@/components/layout/container";
+import { SiteBrandMark } from "@/components/shared/site-brand-mark";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { mainNav } from "@/constants/nav";
@@ -21,7 +22,7 @@ import { cn } from "@/lib/utils";
  * Mobile nav is a simple slide-down panel; a full off-canvas /
  * focus-trapped menu is a nice-to-have for a later pass.
  */
-export function Header() {
+export function Header({ logoUrl }: { logoUrl?: string | null } = {}) {
   const scrolled = useScrollPosition();
   const direction = useScrollDirection();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -38,9 +39,7 @@ export function Header() {
     >
       <Container className="flex h-18 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-soft">
-            <Briefcase className="h-4.5 w-4.5" strokeWidth={2.25} />
-          </span>
+          <SiteBrandMark logoUrl={logoUrl} name={siteConfig.shortName} />
           <span className="text-base">{siteConfig.shortName}</span>
         </Link>
 
@@ -58,7 +57,7 @@ export function Header() {
 
         <div className="hidden items-center gap-2 md:flex">
           <ThemeToggle />
-          <Link href="/jobs" className={cn(buttonVariants({ size: "lg", variant: "cta" }))}>
+          <Link href="/jobs" className={cn(buttonVariants({ variant: "cta" }), "px-7")}>
             Browse Jobs
           </Link>
         </div>

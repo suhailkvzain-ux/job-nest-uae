@@ -4,6 +4,7 @@ import { AdsenseScript } from "@/components/ads/adsense-script";
 import { PageViewTracker } from "@/components/analytics/page-view-tracker";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { getAllSettings } from "@/services/settings.service";
 
 /**
  * Public marketing/site route group layout — Header + Footer, present on
@@ -14,7 +15,10 @@ import { Header } from "@/components/layout/header";
  * `<html>/<body>` layout, so route groups are the standard way to give
  * different sections of the app different shells while sharing it.
  */
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getAllSettings();
+  const logoUrl = settings.general.logoUrl || null;
+
   return (
     <>
       <AdsenseScript />
@@ -25,9 +29,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <Suspense fallback={null}>
         <PageViewTracker />
       </Suspense>
-      <Header />
+      <Header logoUrl={logoUrl} />
       <main className="flex-1">{children}</main>
-      <Footer />
+      <Footer logoUrl={logoUrl} />
     </>
   );
 }

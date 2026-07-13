@@ -32,7 +32,13 @@ interface MasterDataTableProps {
  * Delete → hand the row up to the parent `MasterDataManager`, which
  * owns the single shared form/delete dialog instances).
  */
-export function MasterDataTable({ rows, entityLabel, publicBasePath, onEdit, onDelete }: MasterDataTableProps) {
+export function MasterDataTable({
+  rows,
+  entityLabel,
+  publicBasePath,
+  onEdit,
+  onDelete,
+}: MasterDataTableProps) {
   if (rows.length === 0) {
     return (
       <EmptyState
@@ -45,21 +51,24 @@ export function MasterDataTable({ rows, entityLabel, publicBasePath, onEdit, onD
   return (
     <div className="overflow-x-auto rounded-2xl border border-border/60">
       <table className="w-full min-w-[720px] text-left text-sm">
-        <thead className="sticky top-16 z-dropdown bg-card">
+        <thead>
           <tr className="border-b border-border/60 text-xs uppercase tracking-wide text-muted-foreground">
-            <th scope="col" className="py-3 pl-4 pr-4 font-medium">
+            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pl-4 pr-4 font-medium">
               {entityLabel} Name
             </th>
-            <th scope="col" className="py-3 pr-4 font-medium">
+            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
               Slug
             </th>
-            <th scope="col" className="py-3 pr-4 font-medium">
+            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
               Number of Jobs
             </th>
-            <th scope="col" className="py-3 pr-4 font-medium">
+            <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
               Created Date
             </th>
-            <th scope="col" className="py-3 pl-4 pr-4 text-right font-medium">
+            <th
+              scope="col"
+              className="sticky top-16 z-dropdown bg-card py-3 pl-4 pr-4 text-right font-medium"
+            >
               Actions
             </th>
           </tr>
@@ -67,7 +76,9 @@ export function MasterDataTable({ rows, entityLabel, publicBasePath, onEdit, onD
         <tbody className="divide-y divide-border/60">
           {rows.map((row) => (
             <tr key={row.id}>
-              <td className="max-w-64 truncate py-3 pl-4 pr-4 font-medium text-foreground">{row.name}</td>
+              <td className="max-w-64 truncate py-3 pl-4 pr-4 font-medium text-foreground">
+                {row.name}
+              </td>
               <td className="max-w-56 truncate py-3 pr-4 text-muted-foreground">{row.slug}</td>
               <td className="py-3 pr-4">
                 <Badge variant={row.jobCount > 0 ? "default" : "secondary"}>{row.jobCount}</Badge>

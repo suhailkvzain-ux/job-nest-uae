@@ -7,7 +7,12 @@ import { useMemo, useState, useTransition } from "react";
 
 import { bulkJobsAction, type BulkJobActionType } from "@/actions/admin-jobs.actions";
 import { JobRowActions } from "@/components/admin/jobs/job-row-actions";
-import { EmploymentTypeBadge, FeaturedBadge, JobStatusBadge, VerifiedBadge } from "@/components/badges/status-badges";
+import {
+  EmploymentTypeBadge,
+  FeaturedBadge,
+  JobStatusBadge,
+  VerifiedBadge,
+} from "@/components/badges/status-badges";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -61,7 +66,10 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
     startTransition(async () => {
       const result = await bulkJobsAction(selectedIds, actionType);
       if (result.success) {
-        toast({ title: `${label} ${result.count} ${result.count === 1 ? "job" : "jobs"}`, variant: "success" });
+        toast({
+          title: `${label} ${result.count} ${result.count === 1 ? "job" : "jobs"}`,
+          variant: "success",
+        });
         setSelected(new Set());
         router.refresh();
       } else {
@@ -71,7 +79,11 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
   }
 
   if (jobs.length === 0) {
-    return <p className="py-12 text-center text-sm text-muted-foreground">No jobs match the current filters.</p>;
+    return (
+      <p className="py-12 text-center text-sm text-muted-foreground">
+        No jobs match the current filters.
+      </p>
+    );
   }
 
   return (
@@ -80,13 +92,28 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
         <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-primary/20 bg-brand-gradient-soft px-4 py-3">
           <span className="text-sm font-medium text-foreground">{selected.size} selected</span>
           <div className="ml-auto flex flex-wrap items-center gap-2">
-            <Button size="sm" variant="outline" disabled={isPending} onClick={() => runBulk("publish", "Published")}>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={isPending}
+              onClick={() => runBulk("publish", "Published")}
+            >
               <Send className="h-3.5 w-3.5" /> Publish
             </Button>
-            <Button size="sm" variant="outline" disabled={isPending} onClick={() => runBulk("unpublish", "Unpublished")}>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={isPending}
+              onClick={() => runBulk("unpublish", "Unpublished")}
+            >
               <Undo2 className="h-3.5 w-3.5" /> Unpublish
             </Button>
-            <Button size="sm" variant="outline" disabled={isPending} onClick={() => runBulk("archive", "Archived")}>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={isPending}
+              onClick={() => runBulk("archive", "Archived")}
+            >
               <Archive className="h-3.5 w-3.5" /> Archive
             </Button>
             <Button
@@ -103,23 +130,54 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
 
       <div className="overflow-x-auto rounded-2xl border border-border/60">
         <table className="w-full min-w-[1100px] text-left text-sm">
-          <thead className="sticky top-16 z-dropdown bg-card">
+          <thead>
             <tr className="border-b border-border/60 text-xs uppercase tracking-wide text-muted-foreground">
-              <th scope="col" className="w-10 py-3 pl-4">
-                <Checkbox checked={allSelected} onCheckedChange={toggleAll} aria-label="Select all jobs on this page" />
+              <th scope="col" className="sticky top-16 z-dropdown w-10 bg-card py-3 pl-4">
+                <Checkbox
+                  checked={allSelected}
+                  onCheckedChange={toggleAll}
+                  aria-label="Select all jobs on this page"
+                />
               </th>
-              <th scope="col" className="py-3 pr-4 font-medium">Job Title</th>
-              <th scope="col" className="py-3 pr-4 font-medium">Company</th>
-              <th scope="col" className="py-3 pr-4 font-medium">Category</th>
-              <th scope="col" className="py-3 pr-4 font-medium">Location</th>
-              <th scope="col" className="py-3 pr-4 font-medium">Type</th>
-              <th scope="col" className="py-3 pr-4 font-medium">Status</th>
-              <th scope="col" className="py-3 pr-4 font-medium">Featured</th>
-              <th scope="col" className="py-3 pr-4 font-medium">Verified</th>
-              <th scope="col" className="py-3 pr-4 font-medium">Published</th>
-              <th scope="col" className="py-3 pr-4 font-medium">Deadline</th>
-              <th scope="col" className="py-3 pr-4 font-medium">Last Updated</th>
-              <th scope="col" className="py-3 pl-4 pr-4 text-right font-medium">Actions</th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Job Title
+              </th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Company
+              </th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Category
+              </th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Location
+              </th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Type
+              </th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Status
+              </th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Featured
+              </th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Verified
+              </th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Published
+              </th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Deadline
+              </th>
+              <th scope="col" className="sticky top-16 z-dropdown bg-card py-3 pr-4 font-medium">
+                Last Updated
+              </th>
+              <th
+                scope="col"
+                className="sticky top-16 z-dropdown bg-card py-3 pl-4 pr-4 text-right font-medium"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/60">
@@ -133,12 +191,19 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
                   />
                 </td>
                 <td className="max-w-56 truncate py-3 pr-4 font-medium text-foreground">
-                  <Link href={`/admin/jobs/${job.id}/edit`} className="hover:text-primary hover:underline">
+                  <Link
+                    href={`/admin/jobs/${job.id}/edit`}
+                    className="hover:text-primary hover:underline"
+                  >
                     {job.title}
                   </Link>
                 </td>
-                <td className="max-w-40 truncate py-3 pr-4 text-muted-foreground">{job.company.name}</td>
-                <td className="max-w-36 truncate py-3 pr-4 text-muted-foreground">{job.category.name}</td>
+                <td className="max-w-40 truncate py-3 pr-4 text-muted-foreground">
+                  {job.company.name}
+                </td>
+                <td className="max-w-36 truncate py-3 pr-4 text-muted-foreground">
+                  {job.category.name}
+                </td>
                 <td className="py-3 pr-4 text-muted-foreground">{job.location.name}</td>
                 <td className="py-3 pr-4">
                   <EmploymentTypeBadge type={job.employmentType} />
@@ -146,8 +211,20 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
                 <td className="py-3 pr-4">
                   <JobStatusBadge status={job.status} />
                 </td>
-                <td className="py-3 pr-4">{job.featured ? <FeaturedBadge /> : <span className="text-muted-foreground">—</span>}</td>
-                <td className="py-3 pr-4">{job.verified ? <VerifiedBadge /> : <span className="text-muted-foreground">—</span>}</td>
+                <td className="py-3 pr-4">
+                  {job.featured ? (
+                    <FeaturedBadge />
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
+                </td>
+                <td className="py-3 pr-4">
+                  {job.verified ? (
+                    <VerifiedBadge />
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
+                </td>
                 <td className="py-3 pr-4 text-muted-foreground">
                   {job.publishedAt ? formatDate(job.publishedAt) : "—"}
                 </td>
@@ -169,10 +246,12 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
       <AlertDialog open={confirmBulkDelete} onOpenChange={setConfirmBulkDelete}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {selected.size} selected {selected.size === 1 ? "job" : "jobs"}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Delete {selected.size} selected {selected.size === 1 ? "job" : "jobs"}?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This removes them from every public page immediately. It's a soft delete, not permanent — but there's
-              no restore UI in this dashboard yet.
+              This removes them from every public page immediately. It's a soft delete, not
+              permanent — but there's no restore UI in this dashboard yet.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

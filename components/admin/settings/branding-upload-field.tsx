@@ -25,7 +25,13 @@ interface BrandingUploadFieldProps {
  * already committed to a specific file the moment it's chosen, unlike
  * a text field an admin might still be mid-edit on.
  */
-export function BrandingUploadField({ kind, label, description, currentUrl, previewClassName }: BrandingUploadFieldProps) {
+export function BrandingUploadField({
+  kind,
+  label,
+  description,
+  currentUrl,
+  previewClassName,
+}: BrandingUploadFieldProps) {
   const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -45,7 +51,10 @@ export function BrandingUploadField({ kind, label, description, currentUrl, prev
     event.target.value = "";
 
     if (!result.success || !result.url) {
-      toast({ title: result.error ?? `Could not upload ${label.toLowerCase()}`, variant: "destructive" });
+      toast({
+        title: result.error ?? `Could not upload ${label.toLowerCase()}`,
+        variant: "destructive",
+      });
       return;
     }
 
@@ -56,11 +65,23 @@ export function BrandingUploadField({ kind, label, description, currentUrl, prev
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-border/60 p-5 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-4">
-        <div className={`flex items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-muted/40 ${previewClassName}`}>
+        <div
+          className={`flex items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-muted/40 ${previewClassName}`}
+        >
           {previewUrl ? (
-            <Image src={previewUrl} alt={label} width={200} height={200} className="h-full w-full object-contain" unoptimized={previewUrl.endsWith(".svg")} />
+            <Image
+              src={previewUrl}
+              alt={label}
+              width={200}
+              height={200}
+              priority
+              className="h-full w-full object-contain"
+              unoptimized={previewUrl.endsWith(".svg")}
+            />
           ) : (
-            <span className="px-2 text-center text-[10px] text-muted-foreground">No {label.toLowerCase()} yet</span>
+            <span className="px-2 text-center text-[10px] text-muted-foreground">
+              No {label.toLowerCase()} yet
+            </span>
           )}
         </div>
         <div className="flex flex-col gap-0.5">
@@ -77,8 +98,19 @@ export function BrandingUploadField({ kind, label, description, currentUrl, prev
           className="hidden"
           onChange={handleFileChange}
         />
-        <Button type="button" variant="outline" size="sm" className="gap-2" disabled={isUploading} onClick={() => inputRef.current?.click()}>
-          {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="gap-2"
+          disabled={isUploading}
+          onClick={() => inputRef.current?.click()}
+        >
+          {isUploading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Upload className="h-4 w-4" />
+          )}
           {isUploading ? "Uploading…" : "Upload New"}
         </Button>
       </div>
