@@ -49,7 +49,7 @@ export interface CategoryWithJobCount extends Category {
  * homepage "Browse by Category" grid. Uses a `groupBy` rather than a
  * per-category `count()` call (avoids an N+1 query for N categories).
  */
-export async function getCategoriesWithJobCounts(): Promise<CategoryWithJobCount[]> {
+export async function getCategoriesWithJobCounts(take?: number): Promise<CategoryWithJobCount[]> {
   const [categories, counts] = await Promise.all([
     prisma.category.findMany({ orderBy: { name: "asc" } }),
     prisma.job.groupBy({
@@ -61,10 +61,19 @@ export async function getCategoriesWithJobCounts(): Promise<CategoryWithJobCount
 
   const countByCategory = new Map(counts.map((c) => [c.categoryId, c._count]));
 
-  return categories.map((category) => ({
+  const withCounts = categories.map((category) => ({
     ...category,
     jobCount: countByCategory.get(category.id) ?? 0,
   }));
+
+  if (take === undefined) return withCounts;
+
+  // Homepage callers pass `take` to cap an otherwise-unbounded grid
+  // (every category, however many exist) down to a short highlight
+  // row. Sort by job count first so the ones actually worth showing
+  // in a capped list are the active categories, not just whichever
+  // happen to sort first alphabetically.
+  return [...withCounts].sort((a, b) => b.jobCount - a.jobCount).slice(0, take);
 }
 
 /**

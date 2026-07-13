@@ -14,7 +14,7 @@ import { Paragraph } from "@/components/typography/text";
 import { Button } from "@/components/ui/button";
 import type { JobWithRelations } from "@/services/jobs.service";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 6;
 
 /**
  * Homepage "Latest Jobs" — newest published jobs first, with a

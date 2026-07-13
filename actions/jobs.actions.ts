@@ -18,5 +18,5 @@ import { getLatestJobs } from "@/services/jobs.service";
  */
 export async function loadMoreLatestJobsAction(page: number) {
   if (await isRateLimited("load-more-jobs", 30)) return [];
-  return getLatestJobs({ page, pageSize: 12 });
+  return getLatestJobs({ page, pageSize: 6 });
 }

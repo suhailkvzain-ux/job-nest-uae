@@ -2,6 +2,17 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 
+// Branding uploads do real work per request (signature-check the bytes,
+// resize with sharp, upload to Supabase Storage) — comfortably fast on
+// a warm connection, but the platform's default server-action time
+// budget can be tight for a large source image on a cold/slow
+// connection. Raising it here (rather than leaving the platform
+// default) is what actually fixes an upload that used to time out
+// mid-request with no error surfaced to the admin — see
+// `uploadBrandingAssetAction` below and the client-side timeout in
+// `BrandingUploadField` for the other half of that fix.
+export const maxDuration = 30;
+
 import { assertAdminAndRateLimit, flattenZodErrors } from "@/lib/admin-action-helpers";
 import { uploadBrandingAsset } from "@/lib/branding-storage";
 import { matchesFileSignature } from "@/lib/file-signature";

@@ -54,7 +54,7 @@ async function FeaturedJobsAsync() {
 }
 
 async function LatestJobsAsync() {
-  const jobs = await getLatestJobs({ page: 1, pageSize: 12 });
+  const jobs = await getLatestJobs({ page: 1, pageSize: 6 });
   return <LatestJobsSection initialJobs={jobs} />;
 }
 
@@ -82,6 +82,14 @@ export default async function HomePage() {
     getSiteMetadataDefaults(),
   ]);
 
+  // The homepage grid is a short highlight row, not the full category
+  // list (that's what `/categories` is for) — capping it here is what
+  // keeps the page from growing one tile taller every time an admin
+  // adds a category. Hero's search dropdown still gets every category
+  // (`categories` itself, uncapped) since a search filter shouldn't
+  // silently hide options the full list has.
+  const topCategories = [...categories].sort((a, b) => b.jobCount - a.jobCount).slice(0, 10);
+
   return (
     <>
       <JsonLd data={organizationSchema} />
@@ -101,7 +109,7 @@ export default async function HomePage() {
         <LatestJobsAsync />
       </Suspense>
       <AdSlot position="HOMEPAGE_MIDDLE" className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8" />
-      <CategoryGridSection categories={categories} />
+      <CategoryGridSection categories={topCategories} />
       <LocationGridSection locations={locations} />
       <Suspense fallback={<PopularCompaniesSkeleton />}>
         <PopularCompaniesAsync />

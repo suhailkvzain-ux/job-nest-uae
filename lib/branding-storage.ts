@@ -11,15 +11,33 @@ const BUCKET = "branding";
  * README before Branding uploads work at all. Idempotent: safe to call
  * on every upload.
  */
+// Memoized per warm serverless instance — `listBuckets()` was being
+// called (and awaited) on *every single* branding upload just to check
+// something that's true after the very first upload ever made. On a
+// slow/cold connection to Supabase that's a full extra network round
+// trip added to every upload's latency for no benefit once the bucket
+// exists, which made uploads more likely to butt up against the
+// platform's function execution time limit. A cold serverless
+// instance re-checks once (safe — `createBucket` on an
+// already-existing bucket is itself a no-op error we swallow), then
+// every subsequent upload on that warm instance skips straight past.
+let bucketReady = false;
+
 async function ensureBucketExists(): Promise<void> {
+  if (bucketReady) return;
+
   const supabase = createAdminClient();
   const { data: buckets } = await supabase.storage.listBuckets();
-  if (buckets?.some((bucket) => bucket.name === BUCKET)) return;
+  if (buckets?.some((bucket) => bucket.name === BUCKET)) {
+    bucketReady = true;
+    return;
+  }
 
   await supabase.storage.createBucket(BUCKET, {
     public: true,
     fileSizeLimit: "5MB",
   });
+  bucketReady = true;
 }
 
 /**

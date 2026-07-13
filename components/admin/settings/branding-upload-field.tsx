@@ -17,6 +17,16 @@ interface BrandingUploadFieldProps {
   previewClassName: string;
 }
 
+/** How long to wait for the upload before giving up client-side and
+ * letting the admin retry, rather than leaving the button spinning
+ * forever. Comfortably above the server action's own 30s budget
+ * (`maxDuration` in `admin-settings.actions.ts`) so a legitimate slow
+ * upload isn't cut off before the server has even had a chance to
+ * time out itself — this is a backstop for the case where the
+ * response never comes back at all (dropped connection, etc.), not a
+ * replacement for the server-side limit. */
+const CLIENT_TIMEOUT_MS = 35_000;
+
 /**
  * One upload widget per Branding asset (Logo/Favicon/Default OG Image).
  * Uploading and saving are the same step (see
@@ -46,20 +56,45 @@ export function BrandingUploadField({
     formData.set("kind", kind);
     formData.set("file", file);
 
-    const result = await uploadBrandingAssetAction(formData);
-    setIsUploading(false);
-    event.target.value = "";
+    // The previous version of this handler had no try/catch around the
+    // server action call. If that call ever rejected instead of
+    // resolving — a dropped connection, the server hitting its own
+    // execution-time limit mid-request, or any other network-level
+    // failure that isn't the action returning `{success:false}` the
+    // normal way — the rejection had nowhere to go, `setIsUploading(false)`
+    // below it never ran, and the button was stuck showing "Uploading…"
+    // indefinitely with no error and no way to retry short of
+    // reloading the page. That's the exact symptom reported: the
+    // button just spins forever. Wrapping the call (plus a hard
+    // client-side timeout as a backstop for a response that never
+    // comes back at all) means this handler now always reaches one of
+    // the two toasts below and always re-enables the button.
+    try {
+      const result = await Promise.race([
+        uploadBrandingAssetAction(formData),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("timeout")), CLIENT_TIMEOUT_MS),
+        ),
+      ]);
 
-    if (!result.success || !result.url) {
+      if (!result.success || !result.url) {
+        toast({
+          title: result.error ?? `Could not upload ${label.toLowerCase()}`,
+          variant: "destructive",
+        });
+      } else {
+        setPreviewUrl(result.url);
+        toast({ title: `${label} updated`, variant: "success" });
+      }
+    } catch {
       toast({
-        title: result.error ?? `Could not upload ${label.toLowerCase()}`,
+        title: `Upload timed out. Check your connection and try again.`,
         variant: "destructive",
       });
-      return;
+    } finally {
+      setIsUploading(false);
+      event.target.value = "";
     }
-
-    setPreviewUrl(result.url);
-    toast({ title: `${label} updated`, variant: "success" });
   }
 
   return (
