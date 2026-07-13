@@ -3,7 +3,12 @@
 import { revalidatePath } from "next/cache";
 
 import { assertAdminAndRateLimit, flattenZodErrors } from "@/lib/admin-action-helpers";
-import { createCompanySchema, updateCompanySchema, type CreateCompanyInput, type UpdateCompanyInput } from "@/lib/validations/company";
+import {
+  createCompanySchema,
+  updateCompanySchema,
+  type CreateCompanyInput,
+  type UpdateCompanyInput,
+} from "@/lib/validations/company";
 import {
   createCompany,
   deleteCompany,
@@ -43,7 +48,11 @@ export async function createCompanyAction(input: CreateCompanyInput): Promise<Co
 
   const parsed = createCompanySchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: "Please fix the errors below.", fieldErrors: flattenZodErrors(parsed.error) };
+    return {
+      success: false,
+      error: "Please fix the errors below.",
+      fieldErrors: flattenZodErrors(parsed.error),
+    };
   }
 
   try {
@@ -55,7 +64,10 @@ export async function createCompanyAction(input: CreateCompanyInput): Promise<Co
   }
 }
 
-export async function updateCompanyAction(id: string, input: UpdateCompanyInput): Promise<CompanyActionResult> {
+export async function updateCompanyAction(
+  id: string,
+  input: UpdateCompanyInput,
+): Promise<CompanyActionResult> {
   try {
     await assertAdminAndRateLimit("update-company");
   } catch (err) {
@@ -64,7 +76,11 @@ export async function updateCompanyAction(id: string, input: UpdateCompanyInput)
 
   const parsed = updateCompanySchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: "Please fix the errors below.", fieldErrors: flattenZodErrors(parsed.error) };
+    return {
+      success: false,
+      error: "Please fix the errors below.",
+      fieldErrors: flattenZodErrors(parsed.error),
+    };
   }
 
   try {
@@ -88,7 +104,8 @@ export async function deleteCompanyAction(id: string): Promise<CompanyActionResu
     if (jobCount > 0) {
       return {
         success: false,
-        error: "This company still has jobs referencing it (including deleted ones). Remove or reassign them before deleting the company.",
+        error:
+          "This company still has active jobs. Remove or reassign them before deleting the company.",
       };
     }
 

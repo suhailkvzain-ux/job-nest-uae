@@ -3,7 +3,12 @@
 import { revalidatePath } from "next/cache";
 
 import { assertAdminAndRateLimit, flattenZodErrors } from "@/lib/admin-action-helpers";
-import { createLocationSchema, updateLocationSchema, type CreateLocationInput, type UpdateLocationInput } from "@/lib/validations/location";
+import {
+  createLocationSchema,
+  updateLocationSchema,
+  type CreateLocationInput,
+  type UpdateLocationInput,
+} from "@/lib/validations/location";
 import {
   createLocation,
   deleteLocation,
@@ -27,7 +32,9 @@ function revalidateLocationPaths(slug?: string) {
   if (slug) revalidatePath(`/locations/${slug}`);
 }
 
-export async function createLocationAction(input: CreateLocationInput): Promise<LocationActionResult> {
+export async function createLocationAction(
+  input: CreateLocationInput,
+): Promise<LocationActionResult> {
   try {
     await assertAdminAndRateLimit("create-location");
   } catch (err) {
@@ -36,7 +43,11 @@ export async function createLocationAction(input: CreateLocationInput): Promise<
 
   const parsed = createLocationSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: "Please fix the errors below.", fieldErrors: flattenZodErrors(parsed.error) };
+    return {
+      success: false,
+      error: "Please fix the errors below.",
+      fieldErrors: flattenZodErrors(parsed.error),
+    };
   }
 
   try {
@@ -48,7 +59,10 @@ export async function createLocationAction(input: CreateLocationInput): Promise<
   }
 }
 
-export async function updateLocationAction(id: string, input: UpdateLocationInput): Promise<LocationActionResult> {
+export async function updateLocationAction(
+  id: string,
+  input: UpdateLocationInput,
+): Promise<LocationActionResult> {
   try {
     await assertAdminAndRateLimit("update-location");
   } catch (err) {
@@ -57,7 +71,11 @@ export async function updateLocationAction(id: string, input: UpdateLocationInpu
 
   const parsed = updateLocationSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: "Please fix the errors below.", fieldErrors: flattenZodErrors(parsed.error) };
+    return {
+      success: false,
+      error: "Please fix the errors below.",
+      fieldErrors: flattenZodErrors(parsed.error),
+    };
   }
 
   try {
@@ -81,7 +99,8 @@ export async function deleteLocationAction(id: string): Promise<LocationActionRe
     if (jobCount > 0) {
       return {
         success: false,
-        error: "This location still has jobs referencing it (including deleted ones). Remove or reassign them before deleting the location.",
+        error:
+          "This location still has active jobs. Remove or reassign them before deleting the location.",
       };
     }
 

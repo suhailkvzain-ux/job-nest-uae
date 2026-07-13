@@ -23,8 +23,13 @@ export async function updateCategory(id: string, input: UpdateCategoryInput) {
   return prisma.category.update({ where: { id }, data: input });
 }
 
+/** Deletes a category, first purging any soft-deleted job rows still pointing at it — see `deleteCompany()` in `companies.service.ts` for the rationale. */
 export async function deleteCategory(id: string) {
-  return prisma.category.delete({ where: { id } });
+  const [, category] = await prisma.$transaction([
+    prisma.job.deleteMany({ where: { categoryId: id, deletedAt: { not: null } } }),
+    prisma.category.delete({ where: { id } }),
+  ]);
+  return category;
 }
 
 export async function getCategoryBySlug(slug: string) {
@@ -77,7 +82,10 @@ export async function getCategoryJobCount(categoryId: string): Promise<number> {
  * excluding the current one — powers the "Related Categories" rail on
  * the category detail page.
  */
-export async function getRelatedCategories(excludeCategoryId: string, take = 6): Promise<CategoryWithJobCount[]> {
+export async function getRelatedCategories(
+  excludeCategoryId: string,
+  take = 6,
+): Promise<CategoryWithJobCount[]> {
   const all = await getCategoriesWithJobCounts();
   return all
     .filter((category) => category.id !== excludeCategoryId && category.jobCount > 0)
@@ -85,19 +93,19 @@ export async function getRelatedCategories(excludeCategoryId: string, take = 6):
     .slice(0, take);
 }
 
-
 // ─────────────────────────────────────────────────────────────
 // Admin Master Data Management (`/admin/categories`)
 // ─────────────────────────────────────────────────────────────
 
-/** Every non-deleted job in this category, regardless of status — see `getCompanyTotalJobCount()` for why this differs from the published-only `getCategoryJobCount()` above. */
-/** Every job row referencing this category, including soft-deleted ones — see `getCompanyTotalJobCount()` in `companies.service.ts` for why the delete-protection gate must count these rather than filtering by `ACTIVE_JOB_WHERE`. */
+/** Active (non-deleted) jobs referencing this category — gates delete-protection. Soft-deleted jobs are purged automatically by `deleteCategory()`, so they no longer need to block deletion. */
 export async function getCategoryTotalJobCount(categoryId: string): Promise<number> {
-  return prisma.job.count({ where: { categoryId } });
+  return prisma.job.count({ where: { categoryId, ...ACTIVE_JOB_WHERE } });
 }
 
 /** `/admin/categories` list query — search by name, sort, paginate. See `getAdminCompaniesList()` for the in-application sort/paginate rationale. */
-export async function getAdminCategoriesList(input: MasterDataSearchInput): Promise<PaginatedResult<CategoryWithJobCount>> {
+export async function getAdminCategoriesList(
+  input: MasterDataSearchInput,
+): Promise<PaginatedResult<CategoryWithJobCount>> {
   const where: Prisma.CategoryWhereInput = input.query
     ? { name: { contains: input.query, mode: "insensitive" } }
     : {};

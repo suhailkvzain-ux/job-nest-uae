@@ -3,7 +3,11 @@ import type { Company, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ensureUniqueSlug } from "@/lib/slug";
 import type { MasterDataSearchInput } from "@/lib/validations/admin-master-data";
-import { resolveCompanySlug, type CreateCompanyInput, type UpdateCompanyInput } from "@/lib/validations/company";
+import {
+  resolveCompanySlug,
+  type CreateCompanyInput,
+  type UpdateCompanyInput,
+} from "@/lib/validations/company";
 import { ACTIVE_JOB_WHERE } from "@/services/jobs.service";
 import type { PaginatedResult } from "@/types";
 
@@ -27,8 +31,21 @@ export async function updateCompany(id: string, input: UpdateCompanyInput) {
   return prisma.company.update({ where: { id }, data: input });
 }
 
+/**
+ * Deletes a company. Any soft-deleted job rows still pointing at this
+ * company (deletedAt set, but the row persists for history/audit) are
+ * purged first in the same transaction — they're already "deleted" from
+ * every user-facing surface, but the DB's `onDelete: Restrict` FK still
+ * blocks the company delete while they exist. Active (non-deleted) jobs
+ * are NOT touched here; those are caught earlier by the guard in
+ * `deleteCompanyAction`, which only counts active jobs.
+ */
 export async function deleteCompany(id: string) {
-  return prisma.company.delete({ where: { id } });
+  const [, company] = await prisma.$transaction([
+    prisma.job.deleteMany({ where: { companyId: id, deletedAt: { not: null } } }),
+    prisma.company.delete({ where: { id } }),
+  ]);
+  return company;
 }
 
 export async function getCompanyBySlug(slug: string) {
@@ -92,7 +109,10 @@ export async function getAllCompaniesWithJobCounts(): Promise<CompanyWithJobCoun
     orderBy: { name: "asc" },
   });
 
-  return companies.map((company) => ({ ...company, jobCount: countByCompany.get(company.id) ?? 0 }));
+  return companies.map((company) => ({
+    ...company,
+    jobCount: countByCompany.get(company.id) ?? 0,
+  }));
 }
 
 /**
@@ -108,14 +128,16 @@ export async function getCompanyJobCount(companyId: string): Promise<number> {
  * current one — powers the "Related Companies" rail on the company
  * detail page.
  */
-export async function getRelatedCompanies(excludeCompanyId: string, take = 6): Promise<CompanyWithJobCount[]> {
+export async function getRelatedCompanies(
+  excludeCompanyId: string,
+  take = 6,
+): Promise<CompanyWithJobCount[]> {
   const all = await getAllCompaniesWithJobCounts();
   return all
     .filter((company) => company.id !== excludeCompanyId)
     .sort((a, b) => b.jobCount - a.jobCount)
     .slice(0, take);
 }
-
 
 // ─────────────────────────────────────────────────────────────
 // Admin Master Data Management (`/admin/companies`)
@@ -130,19 +152,14 @@ export async function getRelatedCompanies(excludeCompanyId: string, take = 6): P
  * jobs "connected" in the sense the spec means.
  */
 /**
- * Every job row referencing this company, including soft-deleted ones —
- * deliberately NOT filtered by `ACTIVE_JOB_WHERE`. This gates the
- * delete-protection check in `deleteCompanyAction`, and `Job.companyId`
- * has `onDelete: Restrict` at the database level: a soft-deleted job
- * (deletedAt set, but the row still exists) still blocks the FK just as
- * much as a live one. Counting only "active" jobs here previously let
- * this check pass (0 active jobs) for a company whose only jobs had
- * been soft-deleted, and the delete would then fail anyway with a raw
- * FK-violation error from Postgres — this counts what the database
- * actually enforces.
+ * Active (non-deleted) jobs referencing this company — gates the
+ * delete-protection check in `deleteCompanyAction`. Soft-deleted jobs
+ * are excluded here because `deleteCompany()` now purges those rows
+ * automatically before deleting the company, so they no longer need to
+ * block the admin from proceeding.
  */
 export async function getCompanyTotalJobCount(companyId: string): Promise<number> {
-  return prisma.job.count({ where: { companyId } });
+  return prisma.job.count({ where: { companyId, ...ACTIVE_JOB_WHERE } });
 }
 
 /**
@@ -155,7 +172,9 @@ export async function getCompanyTotalJobCount(companyId: string): Promise<number
  * code, then slices the page — the same trade-off already made by
  * `getRelatedCompanies()` above.
  */
-export async function getAdminCompaniesList(input: MasterDataSearchInput): Promise<PaginatedResult<CompanyWithJobCount>> {
+export async function getAdminCompaniesList(
+  input: MasterDataSearchInput,
+): Promise<PaginatedResult<CompanyWithJobCount>> {
   const where: Prisma.CompanyWhereInput = input.query
     ? { name: { contains: input.query, mode: "insensitive" } }
     : {};

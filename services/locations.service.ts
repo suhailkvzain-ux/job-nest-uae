@@ -23,8 +23,13 @@ export async function updateLocation(id: string, input: UpdateLocationInput) {
   return prisma.location.update({ where: { id }, data: input });
 }
 
+/** Deletes a location, first purging any soft-deleted job rows still pointing at it — see `deleteCompany()` in `companies.service.ts` for the rationale. */
 export async function deleteLocation(id: string) {
-  return prisma.location.delete({ where: { id } });
+  const [, location] = await prisma.$transaction([
+    prisma.job.deleteMany({ where: { locationId: id, deletedAt: { not: null } } }),
+    prisma.location.delete({ where: { id } }),
+  ]);
+  return location;
 }
 
 export async function getLocationBySlug(slug: string) {
@@ -75,7 +80,10 @@ export async function getLocationJobCount(locationId: string): Promise<number> {
  * excluding the current one — powers the "Related Locations" rail on
  * the location detail page.
  */
-export async function getRelatedLocations(excludeLocationId: string, take = 6): Promise<LocationWithJobCount[]> {
+export async function getRelatedLocations(
+  excludeLocationId: string,
+  take = 6,
+): Promise<LocationWithJobCount[]> {
   const all = await getLocationsWithJobCounts();
   return all
     .filter((location) => location.id !== excludeLocationId && location.jobCount > 0)
@@ -83,19 +91,19 @@ export async function getRelatedLocations(excludeLocationId: string, take = 6): 
     .slice(0, take);
 }
 
-
 // ─────────────────────────────────────────────────────────────
 // Admin Master Data Management (`/admin/locations`)
 // ─────────────────────────────────────────────────────────────
 
-/** Every non-deleted job in this location, regardless of status — see `getCompanyTotalJobCount()` for why this differs from the published-only `getLocationJobCount()` above. */
-/** Every job row referencing this location, including soft-deleted ones — see `getCompanyTotalJobCount()` in `companies.service.ts` for why the delete-protection gate must count these rather than filtering by `ACTIVE_JOB_WHERE`. */
+/** Active (non-deleted) jobs referencing this location — gates delete-protection. Soft-deleted jobs are purged automatically by `deleteLocation()`, so they no longer need to block deletion. */
 export async function getLocationTotalJobCount(locationId: string): Promise<number> {
-  return prisma.job.count({ where: { locationId } });
+  return prisma.job.count({ where: { locationId, ...ACTIVE_JOB_WHERE } });
 }
 
 /** `/admin/locations` list query — search by name, sort, paginate. See `getAdminCompaniesList()` for the in-application sort/paginate rationale. */
-export async function getAdminLocationsList(input: MasterDataSearchInput): Promise<PaginatedResult<LocationWithJobCount>> {
+export async function getAdminLocationsList(
+  input: MasterDataSearchInput,
+): Promise<PaginatedResult<LocationWithJobCount>> {
   const where: Prisma.LocationWhereInput = input.query
     ? { name: { contains: input.query, mode: "insensitive" } }
     : {};

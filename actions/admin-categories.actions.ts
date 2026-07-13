@@ -3,7 +3,12 @@
 import { revalidatePath } from "next/cache";
 
 import { assertAdminAndRateLimit, flattenZodErrors } from "@/lib/admin-action-helpers";
-import { createCategorySchema, updateCategorySchema, type CreateCategoryInput, type UpdateCategoryInput } from "@/lib/validations/category";
+import {
+  createCategorySchema,
+  updateCategorySchema,
+  type CreateCategoryInput,
+  type UpdateCategoryInput,
+} from "@/lib/validations/category";
 import {
   createCategory,
   deleteCategory,
@@ -27,7 +32,9 @@ function revalidateCategoryPaths(slug?: string) {
   if (slug) revalidatePath(`/categories/${slug}`);
 }
 
-export async function createCategoryAction(input: CreateCategoryInput): Promise<CategoryActionResult> {
+export async function createCategoryAction(
+  input: CreateCategoryInput,
+): Promise<CategoryActionResult> {
   try {
     await assertAdminAndRateLimit("create-category");
   } catch (err) {
@@ -36,7 +43,11 @@ export async function createCategoryAction(input: CreateCategoryInput): Promise<
 
   const parsed = createCategorySchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: "Please fix the errors below.", fieldErrors: flattenZodErrors(parsed.error) };
+    return {
+      success: false,
+      error: "Please fix the errors below.",
+      fieldErrors: flattenZodErrors(parsed.error),
+    };
   }
 
   try {
@@ -48,7 +59,10 @@ export async function createCategoryAction(input: CreateCategoryInput): Promise<
   }
 }
 
-export async function updateCategoryAction(id: string, input: UpdateCategoryInput): Promise<CategoryActionResult> {
+export async function updateCategoryAction(
+  id: string,
+  input: UpdateCategoryInput,
+): Promise<CategoryActionResult> {
   try {
     await assertAdminAndRateLimit("update-category");
   } catch (err) {
@@ -57,7 +71,11 @@ export async function updateCategoryAction(id: string, input: UpdateCategoryInpu
 
   const parsed = updateCategorySchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: "Please fix the errors below.", fieldErrors: flattenZodErrors(parsed.error) };
+    return {
+      success: false,
+      error: "Please fix the errors below.",
+      fieldErrors: flattenZodErrors(parsed.error),
+    };
   }
 
   try {
@@ -81,7 +99,8 @@ export async function deleteCategoryAction(id: string): Promise<CategoryActionRe
     if (jobCount > 0) {
       return {
         success: false,
-        error: "This category still has jobs referencing it (including deleted ones). Remove or reassign them before deleting the category.",
+        error:
+          "This category still has active jobs. Remove or reassign them before deleting the category.",
       };
     }
 
