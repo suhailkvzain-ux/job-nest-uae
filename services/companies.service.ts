@@ -129,8 +129,20 @@ export async function getRelatedCompanies(excludeCompanyId: string, take = 6): P
  * below checks, since a company with only draft/archived jobs still has
  * jobs "connected" in the sense the spec means.
  */
+/**
+ * Every job row referencing this company, including soft-deleted ones —
+ * deliberately NOT filtered by `ACTIVE_JOB_WHERE`. This gates the
+ * delete-protection check in `deleteCompanyAction`, and `Job.companyId`
+ * has `onDelete: Restrict` at the database level: a soft-deleted job
+ * (deletedAt set, but the row still exists) still blocks the FK just as
+ * much as a live one. Counting only "active" jobs here previously let
+ * this check pass (0 active jobs) for a company whose only jobs had
+ * been soft-deleted, and the delete would then fail anyway with a raw
+ * FK-violation error from Postgres — this counts what the database
+ * actually enforces.
+ */
 export async function getCompanyTotalJobCount(companyId: string): Promise<number> {
-  return prisma.job.count({ where: { companyId, ...ACTIVE_JOB_WHERE } });
+  return prisma.job.count({ where: { companyId } });
 }
 
 /**

@@ -91,8 +91,9 @@ export async function getRelatedCategories(excludeCategoryId: string, take = 6):
 // ─────────────────────────────────────────────────────────────
 
 /** Every non-deleted job in this category, regardless of status — see `getCompanyTotalJobCount()` for why this differs from the published-only `getCategoryJobCount()` above. */
+/** Every job row referencing this category, including soft-deleted ones — see `getCompanyTotalJobCount()` in `companies.service.ts` for why the delete-protection gate must count these rather than filtering by `ACTIVE_JOB_WHERE`. */
 export async function getCategoryTotalJobCount(categoryId: string): Promise<number> {
-  return prisma.job.count({ where: { categoryId, ...ACTIVE_JOB_WHERE } });
+  return prisma.job.count({ where: { categoryId } });
 }
 
 /** `/admin/categories` list query — search by name, sort, paginate. See `getAdminCompaniesList()` for the in-application sort/paginate rationale. */

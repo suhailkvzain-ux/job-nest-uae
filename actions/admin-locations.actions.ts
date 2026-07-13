@@ -81,7 +81,7 @@ export async function deleteLocationAction(id: string): Promise<LocationActionRe
     if (jobCount > 0) {
       return {
         success: false,
-        error: "This location has active jobs. Remove location from jobs before deleting.",
+        error: "This location still has jobs referencing it (including deleted ones). Remove or reassign them before deleting the location.",
       };
     }
 

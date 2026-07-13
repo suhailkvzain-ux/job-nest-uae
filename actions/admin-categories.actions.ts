@@ -81,7 +81,7 @@ export async function deleteCategoryAction(id: string): Promise<CategoryActionRe
     if (jobCount > 0) {
       return {
         success: false,
-        error: "This category has active jobs. Remove category from jobs before deleting.",
+        error: "This category still has jobs referencing it (including deleted ones). Remove or reassign them before deleting the category.",
       };
     }
 

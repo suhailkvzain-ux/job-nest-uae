@@ -88,7 +88,7 @@ export async function deleteCompanyAction(id: string): Promise<CompanyActionResu
     if (jobCount > 0) {
       return {
         success: false,
-        error: "This company has active jobs. Remove company from jobs before deleting.",
+        error: "This company still has jobs referencing it (including deleted ones). Remove or reassign them before deleting the company.",
       };
     }
 
