@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
+import { createCategoryAction } from "@/actions/admin-categories.actions";
+import { createCompanyAction } from "@/actions/admin-companies.actions";
 import {
   archiveJobAction,
   createJobAction,
@@ -15,8 +17,10 @@ import {
   scheduleJobAction,
   updateJobAction,
 } from "@/actions/admin-jobs.actions";
+import { createLocationAction } from "@/actions/admin-locations.actions";
 import { JobSeoPreview } from "@/components/admin/jobs/job-seo-preview";
 import { JobStatusBadge } from "@/components/badges/status-badges";
+import { FormCombobox } from "@/components/forms/form-combobox";
 import { FormDatePicker } from "@/components/forms/form-date-picker";
 import { FormEmailInput } from "@/components/forms/form-email-input";
 import { FormFieldWrapper } from "@/components/forms/form-field-wrapper";
@@ -124,6 +128,9 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [slugTouched, setSlugTouched] = useState(Boolean(defaultValues?.slug));
   const [leaveWarningOpen, setLeaveWarningOpen] = useState(false);
+  const [companyOptions, setCompanyOptions] = useState(companies);
+  const [categoryOptions, setCategoryOptions] = useState(categories);
+  const [locationOptions, setLocationOptions] = useState(locations);
 
   const form = useForm<CreateJobInput>({
     resolver: zodResolver(createJobSchema),
@@ -149,12 +156,45 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
   // regardless, so this is purely a client-side preview/convenience.
   useEffect(() => {
     if (slugTouched) return;
-    const company = companies.find((c) => c.id === watchedCompanyId)?.name;
-    const location = locations.find((l) => l.id === watchedLocationId)?.name;
+    const company = companyOptions.find((c) => c.id === watchedCompanyId)?.name;
+    const location = locationOptions.find((l) => l.id === watchedLocationId)?.name;
     const base = [watchedTitle, company, location].filter(Boolean).join(" ");
     setValue("slug", slugify(base), { shouldDirty: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-derive from these three source fields
-  }, [watchedTitle, watchedCompanyId, watchedLocationId, slugTouched]);
+  }, [watchedTitle, watchedCompanyId, watchedLocationId, slugTouched, companyOptions, locationOptions]);
+
+  async function handleCreateCompany(name: string) {
+    const result = await createCompanyAction({ name });
+    if (!result.success || !result.companyId) {
+      toast({ title: result.error ?? "Could not create company", variant: "destructive" });
+      return null;
+    }
+    const created = { id: result.companyId, name };
+    setCompanyOptions((prev) => [...prev, created]);
+    return { label: created.name, value: created.id };
+  }
+
+  async function handleCreateCategory(name: string) {
+    const result = await createCategoryAction({ name });
+    if (!result.success || !result.categoryId) {
+      toast({ title: result.error ?? "Could not create category", variant: "destructive" });
+      return null;
+    }
+    const created = { id: result.categoryId, name };
+    setCategoryOptions((prev) => [...prev, created]);
+    return { label: created.name, value: created.id };
+  }
+
+  async function handleCreateLocation(name: string) {
+    const result = await createLocationAction({ name });
+    if (!result.success || !result.locationId) {
+      toast({ title: result.error ?? "Could not create location", variant: "destructive" });
+      return null;
+    }
+    const created = { id: result.locationId, name };
+    setLocationOptions((prev) => [...prev, created]);
+    return { label: created.name, value: created.id };
+  }
 
   async function onSubmit(data: CreateJobInput, intent: PublishIntent) {
     setSubmittingIntent(intent);
@@ -250,26 +290,35 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <FormTextInput control={control} name="title" label="Job Title" required className="sm:col-span-2" />
-            <FormSelect
+            <FormCombobox
               control={control}
               name="companyId"
               label="Company"
               required
-              options={companies.map((c) => ({ label: c.name, value: c.id }))}
+              entityName="company"
+              placeholder="Search or add a company…"
+              options={companyOptions.map((c) => ({ label: c.name, value: c.id }))}
+              onCreate={handleCreateCompany}
             />
-            <FormSelect
+            <FormCombobox
               control={control}
               name="categoryId"
               label="Category"
               required
-              options={categories.map((c) => ({ label: c.name, value: c.id }))}
+              entityName="category"
+              placeholder="Search or add a category…"
+              options={categoryOptions.map((c) => ({ label: c.name, value: c.id }))}
+              onCreate={handleCreateCategory}
             />
-            <FormSelect
+            <FormCombobox
               control={control}
               name="locationId"
               label="Location"
               required
-              options={locations.map((l) => ({ label: l.name, value: l.id }))}
+              entityName="location"
+              placeholder="Search or add a location…"
+              options={locationOptions.map((l) => ({ label: l.name, value: l.id }))}
+              onCreate={handleCreateLocation}
             />
             <FormSelect
               control={control}
@@ -283,7 +332,6 @@ export function JobForm({ mode, jobId, currentStatus, defaultValues, companies, 
             <FormNumberInput control={control} name="salaryMax" label="Salary Max" />
             <FormTextInput control={control} name="salaryCurrency" label="Currency" placeholder="AED" />
             <FormTextInput control={control} name="education" label="Education" />
-            <FormTextInput control={control} name="visaStatus" label="Visa Status" />
             <FormTextInput control={control} name="nationality" label="Nationality" />
             <FormTagsInput control={control} name="languages" label="Languages" className="sm:col-span-2" />
             <FormNumberInput control={control} name="vacancies" label="Number of Vacancies" />
