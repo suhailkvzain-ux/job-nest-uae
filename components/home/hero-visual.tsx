@@ -21,10 +21,10 @@ export function HeroVisual({ stats }: HeroVisualProps) {
       <span className="absolute -left-2 top-2 -rotate-6 rounded-lg bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/70 ring-1 ring-white/15 backdrop-blur-sm">
         Verified
       </span>
-      <span className="absolute right-2 top-16 rotate-3 rounded-lg bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/70 ring-1 ring-white/15 backdrop-blur-sm">
+      <span className="absolute right-6 top-28 rotate-3 rounded-lg bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/70 ring-1 ring-white/15 backdrop-blur-sm">
         No Fees
       </span>
-      <span className="absolute bottom-24 left-0 -rotate-3 rounded-lg bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/70 ring-1 ring-white/15 backdrop-blur-sm">
+      <span className="absolute bottom-32 left-2 -rotate-3 rounded-lg bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/70 ring-1 ring-white/15 backdrop-blur-sm">
         UAE-Wide
       </span>
 
