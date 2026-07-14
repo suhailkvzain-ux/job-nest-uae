@@ -76,7 +76,7 @@ export function HeroSection({ locations, categories, stats }: HeroSectionProps) 
         {/* Search panel — a separate white card overlapping the dark
             banner's bottom edge, so the search bar itself stays fully
             legible instead of sitting on the gradient. */}
-        <FadeUp className="relative z-10 mx-auto -mt-16 w-full max-w-3xl rounded-3xl bg-card p-6 shadow-soft-xl ring-1 ring-border/60 sm:p-8">
+        <FadeUp className="relative z-10 mx-auto -mt-16 w-full max-w-4xl rounded-3xl bg-card p-6 shadow-soft-xl ring-1 ring-border/60 sm:p-8">
           <AdvancedSearch locations={locations} categories={categories} onSubmit={handleSearch} />
           <QuickFilterChips className="mt-4 justify-center" />
           <div className="mt-5 flex justify-center">

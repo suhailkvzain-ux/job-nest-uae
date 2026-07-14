@@ -48,7 +48,7 @@ export function AdvancedSearch({ locations, categories, onSubmit, className }: A
         <KeywordSearch value={query} onChange={setQuery} className="flex-1" />
 
         <Select value={locationSlug} onValueChange={setLocationSlug}>
-          <SelectTrigger className="md:w-48 md:border-0 md:shadow-none">
+          <SelectTrigger className="md:w-36 md:border-0 md:shadow-none">
             <SelectValue placeholder="Any location" />
           </SelectTrigger>
           <SelectContent>
@@ -61,7 +61,7 @@ export function AdvancedSearch({ locations, categories, onSubmit, className }: A
         </Select>
 
         <Select value={categorySlug} onValueChange={setCategorySlug}>
-          <SelectTrigger className="md:w-48 md:border-0 md:shadow-none">
+          <SelectTrigger className="md:w-36 md:border-0 md:shadow-none">
             <SelectValue placeholder="Any category" />
           </SelectTrigger>
           <SelectContent>
