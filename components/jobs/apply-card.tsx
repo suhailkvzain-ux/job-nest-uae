@@ -54,14 +54,25 @@ export function ApplyCard({
 
         <div className="flex flex-col gap-2.5">
           {officialWebsite && (
-            <Button asChild size="lg" onClick={onWebsiteClick}>
+            <Button
+              asChild
+              size="cta"
+              className="w-full text-[15px] font-semibold shadow-soft-lg"
+              onClick={onWebsiteClick}
+            >
               <a href={officialWebsite} target="_blank" rel="noreferrer noopener">
                 Apply on Official Website
               </a>
             </Button>
           )}
           {officialEmail && (
-            <Button asChild variant="outline" size="lg" onClick={onEmailClick}>
+            <Button
+              asChild
+              variant="outline"
+              size="cta"
+              className="w-full text-[15px] font-semibold"
+              onClick={onEmailClick}
+            >
               <a href={mailtoHref}>
                 <Mail className="h-4 w-4" /> Apply via Email
               </a>

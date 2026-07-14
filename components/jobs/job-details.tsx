@@ -54,6 +54,25 @@ export function JobDetails({ job, relatedJobs = [], jobUrl, middleAd, onWebsiteC
           </>
         )}
 
+        {/* Mobile-only Apply card: on small screens this grid stacks into a
+            single column, so the sidebar (with its own ApplyCard below)
+            would otherwise render entirely *after* Similar Jobs — putting
+            the primary CTA underneath a wall of unrelated job cards. This
+            duplicate is shown only below `lg`, right before Similar Jobs,
+            so mobile visitors see Apply first; the sidebar's copy stays
+            `hidden` on mobile (see below) so it isn't shown twice. */}
+        <div className="lg:hidden">
+          <ApplyCard
+            officialWebsite={job.officialWebsite}
+            officialEmail={job.officialEmail}
+            applicationDeadline={job.applicationDeadline}
+            vacancies={job.vacancies}
+            jobTitle={job.title}
+            onWebsiteClick={onWebsiteClick}
+            onEmailClick={onEmailClick}
+          />
+        </div>
+
         {relatedJobs.length > 0 && (
           <>
             <Divider />
@@ -64,15 +83,17 @@ export function JobDetails({ job, relatedJobs = [], jobUrl, middleAd, onWebsiteC
 
       <StickySidebar>
         <Stack gap="md">
-          <ApplyCard
-            officialWebsite={job.officialWebsite}
-            officialEmail={job.officialEmail}
-            applicationDeadline={job.applicationDeadline}
-            vacancies={job.vacancies}
-            jobTitle={job.title}
-            onWebsiteClick={onWebsiteClick}
-            onEmailClick={onEmailClick}
-          />
+          <div className="hidden lg:block">
+            <ApplyCard
+              officialWebsite={job.officialWebsite}
+              officialEmail={job.officialEmail}
+              applicationDeadline={job.applicationDeadline}
+              vacancies={job.vacancies}
+              jobTitle={job.title}
+              onWebsiteClick={onWebsiteClick}
+              onEmailClick={onEmailClick}
+            />
+          </div>
           <JobInformationCard job={job} />
           <CompanyInfoCard company={job.company} />
           <ShareJobCard title={job.title} url={jobUrl} onShare={onShare} />
