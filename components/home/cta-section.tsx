@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Rocket } from "lucide-react";
 import Link from "next/link";
 
 import { Container } from "@/components/layout/container";
@@ -9,11 +9,13 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /**
- * Closing full-width CTA banner — deliberately a darker "night sky"
- * panel (deep navy-to-brand gradient + soft radial glow + a few faint
- * star dots) rather than the same bright brand gradient used
- * elsewhere on the page, so it reads as a distinct closing moment
- * instead of "another purple box."
+ * Closing full-width CTA banner — a darker "night sky" panel (deep
+ * navy-to-brand gradient + soft radial glow + faint star dots) with a
+ * small hand-composed "launch" motif (a tilted rocket badge sitting on
+ * soft cloud-like blobs, echoing a hand-illustrated banner) rather
+ * than a flat gradient box with just text — the plain version of this
+ * banner was one of the flattest, most "generated" -looking spots on
+ * the page.
  */
 export function CtaSection() {
   return (
@@ -32,6 +34,16 @@ export function CtaSection() {
             }}
             aria-hidden="true"
           />
+
+          {/* Hand-composed launch motif — cloud blobs + a tilted rocket badge, static (no motion). */}
+          <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden="true">
+            <div className="absolute -right-6 bottom-4 h-24 w-40 rounded-full bg-white/10 blur-2xl" />
+            <div className="absolute right-16 bottom-0 h-16 w-28 rounded-full bg-white/10 blur-xl" />
+            <div className="absolute right-10 top-8 flex h-16 w-16 -rotate-12 items-center justify-center rounded-3xl bg-white/15 shadow-soft-lg ring-1 ring-white/25 backdrop-blur-sm">
+              <Rocket className="h-7 w-7 text-white" strokeWidth={1.75} />
+            </div>
+          </div>
+
           <div className="relative flex flex-col items-center gap-6">
             <Heading level="h2" as="h2" className="max-w-xl text-primary-foreground">
               Start Your Career Journey Today

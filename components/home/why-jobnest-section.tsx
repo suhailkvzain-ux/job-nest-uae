@@ -7,7 +7,6 @@ import { Section } from "@/components/layout/section";
 import { StaggerContainer, StaggerItem } from "@/components/motion/motion-wrappers";
 import { Heading } from "@/components/typography/heading";
 import { Paragraph } from "@/components/typography/text";
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface Feature {
@@ -17,10 +16,16 @@ interface Feature {
   accent: "purple" | "green" | "blue";
 }
 
-const ACCENT_CLASSES: Record<Feature["accent"], string> = {
-  purple: "bg-badge-purple text-badge-purple-foreground",
-  green: "bg-badge-green text-badge-green-foreground",
-  blue: "bg-badge-blue text-badge-blue-foreground",
+const CARD_BG: Record<Feature["accent"], string> = {
+  purple: "bg-badge-purple",
+  green: "bg-badge-green",
+  blue: "bg-badge-blue",
+};
+
+const CHIP_CLASSES: Record<Feature["accent"], string> = {
+  purple: "bg-badge-purple-foreground text-white",
+  green: "bg-badge-green-foreground text-white",
+  blue: "bg-badge-blue-foreground text-white",
 };
 
 const FEATURES: Feature[] = [
@@ -44,7 +49,11 @@ const FEATURES: Feature[] = [
   },
 ];
 
-/** Homepage "Why Job Nest UAE" — three static trust/value-prop cards. */
+/**
+ * Homepage "Why Job Nest UAE" — three trust/value-prop cards, each a
+ * full soft-tinted card (not just a white card with a tinted icon) to
+ * match the same "colorful card grid" treatment as `CategoryCard`.
+ */
 export function WhyJobNestSection() {
   return (
     <Section id="why-job-nest" aria-labelledby="why-job-nest-heading">
@@ -62,17 +71,22 @@ export function WhyJobNestSection() {
           <Grid cols={{ base: 1, md: 3 }} gap="lg">
             {FEATURES.map(({ icon: Icon, title, description, accent }) => (
               <StaggerItem key={title}>
-                <Card className="h-full border-border/50 text-center transition-all hover:-translate-y-1 hover:shadow-soft-lg">
-                  <CardContent className="flex h-full flex-col items-center gap-4 p-8">
-                    <span className={cn("flex h-14 w-14 items-center justify-center rounded-2xl", ACCENT_CLASSES[accent])}>
+                <div
+                  className={cn(
+                    "h-full rounded-2xl border border-black/[0.03] text-center transition-all hover:-translate-y-1 hover:shadow-soft-lg dark:border-white/[0.04]",
+                    CARD_BG[accent],
+                  )}
+                >
+                  <div className="flex h-full flex-col items-center gap-4 p-8">
+                    <span className={cn("flex h-14 w-14 items-center justify-center rounded-2xl shadow-sm", CHIP_CLASSES[accent])}>
                       <Icon className="h-6 w-6" strokeWidth={1.75} />
                     </span>
                     <div className="flex flex-col gap-2">
                       <h3 className="font-semibold text-foreground">{title}</h3>
-                      <p className="text-sm text-muted-foreground">{description}</p>
+                      <p className="text-sm text-foreground/60">{description}</p>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </StaggerItem>
             ))}
           </Grid>
