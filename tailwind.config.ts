@@ -116,8 +116,8 @@ const config: Config = {
       // Consumed directly (text-display, text-h1, ...) or via the
       // <Heading>/<Text> components in components/typography/.
       fontSize: {
-        display: ["3.5rem", { lineHeight: "1.05", letterSpacing: "-0.02em", fontWeight: "700" }],
-        h1: ["2.75rem", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
+        display: ["clamp(2rem, 1.2rem + 5vw, 3.5rem)", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
+        h1: ["clamp(1.75rem, 1.1rem + 3.5vw, 2.75rem)", { lineHeight: "1.15", letterSpacing: "-0.02em", fontWeight: "700" }],
         h2: ["2.25rem", { lineHeight: "1.15", letterSpacing: "-0.01em", fontWeight: "700" }],
         h3: ["1.75rem", { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "600" }],
         h4: ["1.375rem", { lineHeight: "1.3", letterSpacing: "-0.005em", fontWeight: "600" }],
