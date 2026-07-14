@@ -29,14 +29,15 @@ const STAT_ITEMS = (stats: HomeStats) => [
 ];
 
 /**
- * Homepage hero — three distinct, stacked pieces rather than one
- * crowded banner: (1) a dark navy statement banner with just the
- * badge/headline/subtext, (2) a white search panel that overlaps its
- * bottom edge (the functional "do something" surface, kept separate
- * so it reads clearly and stays legible), and (3) a plain stats row
- * further down. Earlier drafts packed the search bar, filters, CTA
- * and a stats label into the dark banner itself, which crowded the
- * banner and made the search bar harder to read against the gradient.
+ * Homepage hero — three fully separate, stacked blocks with normal
+ * spacing between them (no overlap): (1) a dark navy statement banner
+ * with just the badge/headline/subtext, (2) a white search panel
+ * below it (the functional "do something" surface), and (3) a plain
+ * stats row further down. An earlier draft had the search panel
+ * overlap the banner's bottom edge via a negative margin — that also
+ * forced the banner to carry extra bottom padding to make room for
+ * the overlap, which left a large dead-space gap. Normal margin-top
+ * spacing between blocks avoids both problems.
  */
 export function HeroSection({ locations, categories, stats }: HeroSectionProps) {
   const router = useRouter();
@@ -52,7 +53,7 @@ export function HeroSection({ locations, categories, stats }: HeroSectionProps) 
   return (
     <Section spacing="none" className="relative pb-24 pt-8 md:pt-12">
       <Container>
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 px-6 pb-24 pt-16 shadow-soft-xl sm:px-10 md:pb-28 md:pt-20">
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 px-6 py-16 shadow-soft-xl sm:px-10 md:py-20">
           {/* Soft brand-tinted glows for depth, no motion */}
           <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-primary/25 blur-3xl" aria-hidden="true" />
           <div className="pointer-events-none absolute -bottom-24 -right-10 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" aria-hidden="true" />
@@ -73,10 +74,13 @@ export function HeroSection({ locations, categories, stats }: HeroSectionProps) 
           </FadeUp>
         </div>
 
-        {/* Search panel — a separate white card overlapping the dark
-            banner's bottom edge, so the search bar itself stays fully
-            legible instead of sitting on the gradient. */}
-        <FadeUp className="relative z-10 mx-auto -mt-16 w-full max-w-4xl rounded-3xl bg-card p-6 shadow-soft-xl ring-1 ring-border/60 sm:p-8">
+      </Container>
+
+      {/* Search panel — a fully separate white card below the banner,
+          with normal spacing (no overlap), so the search bar stays
+          fully legible and the two blocks read as distinct sections. */}
+      <Container className="relative mt-8">
+        <FadeUp className="mx-auto w-full max-w-4xl rounded-3xl bg-card p-6 shadow-soft-xl ring-1 ring-border/60 sm:p-8">
           <AdvancedSearch locations={locations} categories={categories} onSubmit={handleSearch} />
           <QuickFilterChips className="mt-4 justify-center" />
           <div className="mt-5 flex justify-center">
