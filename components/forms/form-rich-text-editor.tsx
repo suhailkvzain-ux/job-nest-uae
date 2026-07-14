@@ -8,6 +8,43 @@ import { FormFieldWrapper } from "@/components/forms/form-field-wrapper";
 import { IconButton } from "@/components/shared/icon-button";
 import { cn } from "@/lib/utils";
 
+/**
+ * The public job-detail components (JobDescription/RequirementsList/
+ * ResponsibilitiesList/BenefitsList in components/jobs/job-content.tsx)
+ * expect plain text with blank-line-separated blocks, NOT HTML - they
+ * split on newlines and render each line as escaped text. But this editor
+ * is a native contentEditable region, and reading innerHTML directly (as
+ * this component used to) captures the browser's raw per-line div/p
+ * wrapper tags as part of the saved string, which then shows up as
+ * literal "<div>" text on the public page. This function converts the
+ * edited DOM into that expected plain-text format instead: each top-level
+ * block element (p/div/h2/h3, and each individual li inside a list)
+ * becomes its own line, blocks are joined with a blank line between them
+ * so both the double-newline paragraph split and the single-newline
+ * bullet split downstream work correctly.
+ */
+function htmlToPlainText(html: string): string {
+  const container = document.createElement("div");
+  container.innerHTML = html;
+  const lines: string[] = [];
+  Array.from(container.children).forEach((child) => {
+    if (child.tagName === "UL" || child.tagName === "OL") {
+      Array.from(child.children).forEach((li) => {
+        const text = (li.textContent ?? "").trim();
+        if (text) lines.push(text);
+      });
+    } else {
+      const text = (child.textContent ?? "").trim();
+      if (text) lines.push(text);
+    }
+  });
+  if (lines.length === 0) {
+    const text = (container.textContent ?? "").trim();
+    if (text) lines.push(text);
+  }
+  return lines.join("\n\n");
+}
+
 interface FormRichTextEditorProps<TFieldValues extends FieldValues> {
   control: Control<TFieldValues>;
   name: FieldPath<TFieldValues>;
@@ -131,14 +168,14 @@ export function FormRichTextEditor<TFieldValues extends FieldValues>({
               suppressContentEditableWarning
               data-placeholder={placeholder}
               className={cn(
-                "min-h-[160px] px-4 py-3 text-sm outline-none",
+                "min-h-[160px] whitespace-pre-wrap px-4 py-3 text-sm outline-none",
                 "[&_h2]:mb-2 [&_h2]:mt-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2:first-child]:mt-0",
                 "[&_h3]:mb-2 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-semibold [&_h3:first-child]:mt-0",
                 "[&_p]:mb-2 [&_ul]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mb-2 [&_ol]:list-decimal [&_ol]:pl-5",
                 "empty:before:text-muted-foreground empty:before:content-[attr(data-placeholder)]",
               )}
               dangerouslySetInnerHTML={{ __html: field.value ?? "" }}
-              onBlur={(e) => field.onChange(e.currentTarget.innerHTML)}
+              onBlur={(e) => field.onChange(htmlToPlainText(e.currentTarget.innerHTML))}
             />
           </div>
         </FormFieldWrapper>
