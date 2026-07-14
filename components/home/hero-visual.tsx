@@ -1,64 +1,77 @@
-import { Briefcase, CheckCircle2, MapPin, Search as SearchIcon } from "lucide-react";
+import { Briefcase, CheckCircle2, ScanSearch, TrendingUp } from "lucide-react";
+
+import type { HomeStats } from "@/services/stats.service";
+
+interface HeroVisualProps {
+  stats: HomeStats;
+}
 
 /**
- * Hand-composed hero illustration — a layered "badge cluster" (glow
- * rings + orbit ring + a central briefcase plate + three orbiting
- * icon chips) built entirely from CSS shapes and Lucide icons, no
- * external image asset. This exists to give the hero a genuine focal
- * visual on desktop instead of empty whitespace next to the headline
- * — the flat, symmetric, text-only hero was the single biggest thing
- * making the page read as a generic template rather than a designed
- * product. Deliberately abstract (briefcase + search + location,
- * not a literal photo/3D render) so it stays honest — nothing here
- * implies a real illustration commissioned for the brand, it's a
- * geometric composition in the brand's own gradient.
+ * Floating "dashboard card" cluster for the dark hero banner —
+ * three white cards stacked/offset on top of the navy gradient,
+ * plus small rotated tag chips scattered around them. Modeled on
+ * the reference's "info card over dark banner" composition, but
+ * every number/label here is real platform data (from `HomeStats`)
+ * rather than a fabricated example — no invented job/company names.
  */
-export function HeroVisual() {
+export function HeroVisual({ stats }: HeroVisualProps) {
   return (
-    <div className="relative mx-auto hidden aspect-square w-full max-w-md lg:block" aria-hidden="true">
-      {/* Outer soft glow */}
-      <div className="absolute inset-0 rounded-full bg-brand-gradient opacity-20 blur-3xl" />
+    <div className="relative mx-auto hidden h-[420px] w-full max-w-md lg:block" aria-hidden="true">
+      {/* Rotated tag chips */}
+      <span className="absolute -left-2 top-2 -rotate-6 rounded-lg bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/70 ring-1 ring-white/15 backdrop-blur-sm">
+        Verified
+      </span>
+      <span className="absolute right-2 top-16 rotate-3 rounded-lg bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/70 ring-1 ring-white/15 backdrop-blur-sm">
+        No Fees
+      </span>
+      <span className="absolute bottom-24 left-0 -rotate-3 rounded-lg bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/70 ring-1 ring-white/15 backdrop-blur-sm">
+        UAE-Wide
+      </span>
 
-      {/* Dashed orbit ring */}
-      <svg className="absolute inset-0 h-full w-full text-primary/25" viewBox="0 0 400 400" fill="none">
-        <circle cx="200" cy="200" r="178" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2 10" strokeLinecap="round" />
-      </svg>
-
-      {/* Central plate */}
-      <div className="absolute left-1/2 top-1/2 flex h-52 w-52 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[2.5rem] bg-brand-gradient shadow-soft-xl ring-8 ring-card/80">
-        <div className="absolute inset-3 rounded-[2rem] border border-white/25" />
-        <Briefcase className="h-20 w-20 text-white" strokeWidth={1.5} />
-      </div>
-
-      {/* Orbiting badge — verified */}
-      <div className="absolute left-[6%] top-[14%] flex items-center gap-2 rounded-2xl bg-card px-3.5 py-2.5 shadow-soft-lg ring-1 ring-border/60">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-badge-green text-badge-green-foreground">
-          <CheckCircle2 className="h-4.5 w-4.5" />
-        </span>
-        <div className="leading-tight">
-          <p className="text-xs font-semibold text-foreground">Verified</p>
-          <p className="text-[11px] text-muted-foreground">Official source</p>
+      {/* Card 1 — live jobs counter (top) */}
+      <div className="absolute right-2 top-0 w-60 rounded-2xl bg-card p-4 shadow-soft-xl ring-1 ring-black/5">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-gradient text-white">
+            <Briefcase className="h-5 w-5" />
+          </span>
+          <div className="leading-tight">
+            <p className="text-lg font-semibold text-foreground">{stats.totalJobs}+</p>
+            <p className="text-[11px] text-muted-foreground">Verified openings live</p>
+          </div>
         </div>
       </div>
 
-      {/* Orbiting badge — search */}
-      <div className="absolute right-[2%] top-[36%] flex h-14 w-14 items-center justify-center rounded-full bg-card shadow-soft-lg ring-1 ring-border/60">
-        <SearchIcon className="h-6 w-6 text-primary" strokeWidth={2} />
+      {/* Card 2 — scanning employers (middle, offset left) */}
+      <div className="absolute left-0 top-[168px] w-64 rounded-2xl bg-card p-4 shadow-soft-xl ring-1 ring-black/5">
+        <div className="mb-2.5 flex items-center gap-2">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-badge-blue text-badge-blue-foreground">
+            <ScanSearch className="h-4 w-4" />
+          </span>
+          <p className="text-xs font-semibold text-foreground">Checking official sources</p>
+        </div>
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+          <div className="h-full w-2/3 rounded-full bg-brand-gradient" />
+        </div>
+        <p className="mt-2 text-[11px] text-muted-foreground">{stats.totalCompanies}+ employers tracked</p>
       </div>
 
-      {/* Orbiting badge — location */}
-      <div className="absolute bottom-[10%] left-[16%] flex items-center gap-2 rounded-2xl bg-card px-3.5 py-2.5 shadow-soft-lg ring-1 ring-border/60">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-badge-orange text-badge-orange-foreground">
-          <MapPin className="h-4.5 w-4.5" />
-        </span>
-        <div className="leading-tight">
-          <p className="text-xs font-semibold text-foreground">7 Emirates</p>
-          <p className="text-[11px] text-muted-foreground">UAE-wide</p>
+      {/* Card 3 — verified sourcing (bottom right) */}
+      <div className="absolute bottom-0 right-6 w-56 rounded-2xl bg-card p-4 shadow-soft-xl ring-1 ring-black/5">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-badge-green text-badge-green-foreground">
+            <CheckCircle2 className="h-5 w-5" />
+          </span>
+          <div className="leading-tight">
+            <p className="text-sm font-semibold text-foreground">Sourced from employer</p>
+            <p className="text-[11px] text-muted-foreground">Direct apply, zero fees</p>
+          </div>
         </div>
       </div>
 
-      {/* Small accent dot */}
-      <div className="absolute bottom-[4%] right-[18%] h-4 w-4 rounded-full bg-badge-purple ring-4 ring-card" />
+      {/* Small trend accent */}
+      <div className="absolute bottom-20 left-16 flex h-11 w-11 items-center justify-center rounded-full bg-badge-purple text-badge-purple-foreground shadow-soft-lg ring-4 ring-slate-900/40">
+        <TrendingUp className="h-5 w-5" />
+      </div>
     </div>
   );
 }
