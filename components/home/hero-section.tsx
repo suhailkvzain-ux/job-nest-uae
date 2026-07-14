@@ -29,15 +29,14 @@ const STAT_ITEMS = (stats: HomeStats) => [
 ];
 
 /**
- * Homepage hero — a single centered column inside a dark navy gradient
- * banner. Earlier drafts scattered several floating info-cards and tag
- * chips around a two-column layout; that read as busy/generic rather
- * than designed, so this version keeps one clear focal composition:
- * badge, headline, subtext, a prominent search bar, quick filters and
- * the CTA, all centered — plus a single quiet trust line under the
- * search instead of multiple disconnected floating widgets. The stats
- * row stays pulled out into its own white card overlapping the bottom
- * edge of the banner.
+ * Homepage hero — three distinct, stacked pieces rather than one
+ * crowded banner: (1) a dark navy statement banner with just the
+ * badge/headline/subtext, (2) a white search panel that overlaps its
+ * bottom edge (the functional "do something" surface, kept separate
+ * so it reads clearly and stays legible), and (3) a plain stats row
+ * further down. Earlier drafts packed the search bar, filters, CTA
+ * and a stats label into the dark banner itself, which crowded the
+ * banner and made the search bar harder to read against the gradient.
  */
 export function HeroSection({ locations, categories, stats }: HeroSectionProps) {
   const router = useRouter();
@@ -51,9 +50,9 @@ export function HeroSection({ locations, categories, stats }: HeroSectionProps) 
   }
 
   return (
-    <Section spacing="none" className="relative pb-28 pt-8 md:pt-12">
+    <Section spacing="none" className="relative pb-24 pt-8 md:pt-12">
       <Container>
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 px-6 py-16 shadow-soft-xl sm:px-10 md:py-24">
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 px-6 pb-24 pt-16 shadow-soft-xl sm:px-10 md:pb-28 md:pt-20">
           {/* Soft brand-tinted glows for depth, no motion */}
           <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-primary/25 blur-3xl" aria-hidden="true" />
           <div className="pointer-events-none absolute -bottom-24 -right-10 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" aria-hidden="true" />
@@ -71,30 +70,27 @@ export function HeroSection({ locations, categories, stats }: HeroSectionProps) 
               employers — browse freely, then apply straight on the employer&apos;s own site or
               email.
             </Paragraph>
-
-            <div className="w-full max-w-xl">
-              <AdvancedSearch locations={locations} categories={categories} onSubmit={handleSearch} />
-            </div>
-
-            <QuickFilterChips className="justify-center" />
-
-            <CtaButton onClick={() => router.push("/jobs")}>Browse All Jobs</CtaButton>
-
-            <div className="mt-2 flex items-center gap-2 text-sm font-medium text-white/60">
-              <ShieldCheck className="h-4.5 w-4.5 text-primary" />
-              100% verified, zero recruitment fees
-            </div>
           </FadeUp>
         </div>
+
+        {/* Search panel — a separate white card overlapping the dark
+            banner's bottom edge, so the search bar itself stays fully
+            legible instead of sitting on the gradient. */}
+        <FadeUp className="relative z-10 mx-auto -mt-16 w-full max-w-3xl rounded-3xl bg-card p-6 shadow-soft-xl ring-1 ring-border/60 sm:p-8">
+          <AdvancedSearch locations={locations} categories={categories} onSubmit={handleSearch} />
+          <QuickFilterChips className="mt-4 justify-center" />
+          <div className="mt-5 flex justify-center">
+            <CtaButton onClick={() => router.push("/jobs")}>Browse All Jobs</CtaButton>
+          </div>
+        </FadeUp>
       </Container>
 
-      {/* Overlapping stats card — breaks out of the dark banner the
-          way a purely flat single-background hero never does. */}
+      {/* Stats row — plain, no label, real platform numbers only. */}
       <Container className="relative mt-10">
-        <FadeUp className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-6 rounded-3xl border border-border/60 bg-card px-8 py-6 shadow-soft-xl sm:justify-between">
+        <FadeUp className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-6 rounded-3xl border border-border/60 bg-card px-8 py-6 shadow-soft-xl">
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <ShieldCheck className="h-4.5 w-4.5 text-primary" />
-            Live platform numbers
+            Zero recruitment fees
           </div>
           <div className="hidden h-8 w-px bg-border sm:block" />
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">

@@ -40,7 +40,7 @@ export function Header({ logoUrl }: { logoUrl?: string | null } = {}) {
       <Container className="flex h-18 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <SiteBrandMark logoUrl={logoUrl} name={siteConfig.shortName} />
-          <span className="text-base">{siteConfig.shortName}</span>
+          {!logoUrl && <span className="text-base">{siteConfig.shortName}</span>}
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">

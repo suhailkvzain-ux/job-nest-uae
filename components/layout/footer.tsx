@@ -16,7 +16,7 @@ export function Footer({ logoUrl }: { logoUrl?: string | null } = {}) {
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
               <SiteBrandMark logoUrl={logoUrl} name={siteConfig.name} />
-              <span>{siteConfig.name}</span>
+              {!logoUrl && <span>{siteConfig.name}</span>}
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
               {siteConfig.description}

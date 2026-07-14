@@ -2,13 +2,16 @@ import { Briefcase } from "lucide-react";
 import Image from "next/image";
 
 /**
- * The little rounded-square mark shown next to the site name in the
- * Header and Footer. Renders the admin's uploaded Branding "Logo"
- * (`general.logoUrl`, set via `/admin/settings` → Branding) when one
- * exists, falling back to the default briefcase glyph otherwise —
- * previously the Header/Footer always hardcoded the briefcase icon and
- * never looked at `logoUrl` at all, so uploading a logo in Settings had
- * no visible effect anywhere on the public site.
+ * The site logo mark shown next to the site name in the Header and
+ * Footer. Renders the admin's uploaded Branding "Logo" (`general.logoUrl`,
+ * set via `/admin/settings` → Branding) when one exists, falling back to
+ * the default briefcase glyph otherwise.
+ *
+ * The uploaded-logo case uses a height-constrained, auto-width box
+ * (`h-9 w-auto`, no forced square/rounded clipping) rather than cropping
+ * every logo into a fixed 36x36 rounded square — a wide/rectangular
+ * logo would otherwise get squeezed or cut off. Only the built-in
+ * fallback glyph uses the branded rounded-square treatment.
  *
  * `priority` is set deliberately: this mark is always above-the-fold in
  * a sticky header, so the default lazy-loading behavior only adds a
@@ -20,13 +23,13 @@ import Image from "next/image";
 export function SiteBrandMark({ logoUrl, name }: { logoUrl?: string | null; name: string }) {
   if (logoUrl) {
     return (
-      <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-2xl shadow-soft">
+      <span className="relative flex h-12 w-auto shrink-0 items-center">
         <Image
           src={logoUrl}
           alt={name}
-          fill
-          sizes="36px"
-          className="object-contain"
+          width={160}
+          height={48}
+          className="h-12 w-auto max-w-[180px] object-contain"
           priority
           unoptimized={logoUrl.endsWith(".svg")}
         />
