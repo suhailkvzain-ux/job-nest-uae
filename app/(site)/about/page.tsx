@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "About Us",
     description:
-      "Job Nest UAE is a job discovery platform — not a recruitment agency. Learn how we verify vacancies and why every application goes straight to the employer.",
+      "Job For UAE is a job discovery platform — not a recruitment agency. Learn how we verify vacancies and why every application goes straight to the employer.",
     path: "/about",
   });
 }
@@ -105,10 +105,10 @@ export default async function AboutPage() {
 
           <div className="flex flex-col gap-4">
             <Heading level="h2" as="h2">
-              How Job Nest UAE Works
+              How Job For UAE Works
             </Heading>
             <Paragraph tone="secondary">
-              Job Nest UAE is a job <strong>discovery</strong> platform, not a recruitment agency. We don&apos;t host
+              Job For UAE is a job <strong>discovery</strong> platform, not a recruitment agency. We don&apos;t host
               applications, collect candidate accounts, or sit between you and an employer. Every listing links directly
               to the employer&apos;s own official website or email — you apply exactly the way that employer intended.
             </Paragraph>

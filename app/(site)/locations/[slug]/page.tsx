@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: LocationDetailPageProps): Pro
 
   return buildMetadata({
     title: `Jobs in ${location.name}`,
-    description: `Browse verified job vacancies in ${location.name}, UAE. Apply directly on the employer's official website or email — Job Nest UAE.`,
+    description: `Browse verified job vacancies in ${location.name}, UAE. Apply directly on the employer's official website or email — Job For UAE.`,
     path: `/locations/${location.slug}`,
   });
 }

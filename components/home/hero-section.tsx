@@ -67,7 +67,7 @@ export function HeroSection({ locations, categories, stats }: HeroSectionProps) 
               Find <span className="text-gradient-brand">Verified Jobs</span> Across the UAE
             </Heading>
             <Paragraph className="max-w-lg text-lg text-white/70">
-              Job Nest UAE publishes only verified vacancies sourced directly from official
+              Job For UAE publishes only verified vacancies sourced directly from official
               employers — browse freely, then apply straight on the employer&apos;s own site or
               email.
             </Paragraph>

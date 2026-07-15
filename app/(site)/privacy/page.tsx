@@ -18,7 +18,7 @@ const LAST_UPDATED = "11 July 2026";
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Privacy Policy",
-    description: "How Job Nest UAE collects, uses, and protects information when you use the site.",
+    description: "How Job For UAE collects, uses, and protects information when you use the site.",
     path: "/privacy",
     noIndex: false,
   });

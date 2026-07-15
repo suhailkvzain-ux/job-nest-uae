@@ -3,7 +3,7 @@
  * login Server Action from brute-force credential guessing.
  *
  * This is intentionally simple (a `Map` in module scope) rather than a
- * distributed store: Job Nest UAE's admin surface is a single account
+ * distributed store: Job For UAE's admin surface is a single account
  * on what's expected to run as a single Next.js instance. If this is
  * ever deployed across multiple serverless instances/regions, each
  * instance keeps its own counters — swap this for a shared store (e.g.

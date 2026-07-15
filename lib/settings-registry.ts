@@ -40,22 +40,22 @@ export type SectionValues<F extends Record<string, SettingFieldDef>> = {
 const currentYear = new Date().getFullYear();
 
 export const GENERAL_FIELDS = {
-  websiteName: { key: "general.website_name", type: "STRING", default: "Job Nest UAE" },
+  websiteName: { key: "general.website_name", type: "STRING", default: "Job For UAE" },
   tagline: { key: "general.tagline", type: "STRING", default: "Find your next job across the UAE" },
   description: {
     key: "general.description",
     type: "STRING",
-    default: "Job Nest UAE is a job discovery platform helping candidates find verified opportunities across the United Arab Emirates.",
+    default: "Job For UAE is a job discovery platform helping candidates find verified opportunities across the United Arab Emirates.",
   },
-  logoUrl: { key: "general.logo_url", type: "STRING", default: "" },
-  faviconUrl: { key: "general.favicon_url", type: "STRING", default: "" },
+  logoUrl: { key: "general.logo_url", type: "STRING", default: "/brand/logo.svg" },
+  faviconUrl: { key: "general.favicon_url", type: "STRING", default: "/brand/icon.svg" },
   defaultLanguage: { key: "general.default_language", type: "STRING", default: "en" },
   timeZone: { key: "general.time_zone", type: "STRING", default: "Asia/Dubai" },
   dateFormat: { key: "general.date_format", type: "STRING", default: "DD MMM YYYY" },
   copyrightText: {
     key: "general.copyright_text",
     type: "STRING",
-    default: `© ${currentYear} Job Nest UAE. All rights reserved.`,
+    default: `© ${currentYear} Job For UAE. All rights reserved.`,
   },
 } as const satisfies Record<string, SettingFieldDef>;
 
@@ -76,7 +76,7 @@ export const SOCIAL_FIELDS = {
 } as const satisfies Record<string, SettingFieldDef>;
 
 export const SEO_FIELDS = {
-  metaTitle: { key: "seo.meta_title", type: "STRING", default: "Job Nest UAE | Find Jobs in the United Arab Emirates" },
+  metaTitle: { key: "seo.meta_title", type: "STRING", default: "Job For UAE | Find Jobs in the United Arab Emirates" },
   metaDescription: {
     key: "seo.meta_description",
     type: "STRING",
@@ -104,7 +104,7 @@ export const GOOGLE_FIELDS = {
  * (this phase explicitly doesn't wire an SMTP send path yet).
  */
 export const EMAIL_FIELDS = {
-  senderName: { key: "email.sender_name", type: "STRING", default: "Job Nest UAE" },
+  senderName: { key: "email.sender_name", type: "STRING", default: "Job For UAE" },
   senderEmail: { key: "email.sender_email", type: "STRING", default: "" },
   replyToEmail: { key: "email.reply_to_email", type: "STRING", default: "" },
 } as const satisfies Record<string, SettingFieldDef>;

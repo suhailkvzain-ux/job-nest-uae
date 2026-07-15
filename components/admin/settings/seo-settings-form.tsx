@@ -24,7 +24,7 @@ export function SeoSettingsForm({ defaultValues }: { defaultValues: SeoSettingsI
             <FormTextInput control={control} name="metaTitle" label="Default Meta Title" />
             <FormTextarea control={control} name="metaDescription" label="Default Meta Description" rows={3} />
             <FormTextInput control={control} name="metaKeywords" label="Default Keywords" placeholder="UAE jobs, Dubai jobs, careers" />
-            <FormUrlInput control={control} name="canonicalDomain" label="Canonical Domain" placeholder="https://jobnestuae.com" />
+            <FormUrlInput control={control} name="canonicalDomain" label="Canonical Domain" placeholder="https://jobforuae.com" />
             <SeoSerpPreview control={control} />
           </>
         )}

@@ -3,7 +3,7 @@ import { createBrowserClient } from "@supabase/ssr";
 /**
  * Supabase client for use in Client Components.
  *
- * Job Nest UAE has no end-user accounts, so this is used sparingly today
+ * Job For UAE has no end-user accounts, so this is used sparingly today
  * (e.g. reading public storage assets). It becomes more relevant once the
  * single-admin dashboard needs client-side session awareness.
  */

@@ -50,7 +50,7 @@ const FEATURES: Feature[] = [
 ];
 
 /**
- * Homepage "Why Job Nest UAE" — three trust/value-prop cards, each a
+ * Homepage "Why Job For UAE" — three trust/value-prop cards, each a
  * full soft-tinted card (not just a white card with a tinted icon) to
  * match the same "colorful card grid" treatment as `CategoryCard`.
  */
@@ -60,7 +60,7 @@ export function WhyJobNestSection() {
       <Container className="flex flex-col gap-10">
         <div className="flex flex-col items-center gap-3 text-center">
           <Heading level="h2" as="h2" id="why-job-nest-heading">
-            Why Job Nest UAE
+            Why Job For UAE
           </Heading>
           <Paragraph tone="secondary" className="max-w-lg">
             A discovery platform built around trust, speed, and getting out of your way.

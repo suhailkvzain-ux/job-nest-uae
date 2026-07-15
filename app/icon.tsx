@@ -29,18 +29,28 @@ export default function Icon() {
           borderRadius: 14,
         }}
       >
-        <svg
-          width="36"
-          height="36"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="2.25"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-          <rect width="20" height="14" x="2" y="6" rx="2" />
+        <svg width="52" height="52" viewBox="0 0 160 160" fill="none">
+          <path
+            d="M108 24 L114 38 L128 42 L114 46 L108 60 L102 46 L88 42 L102 38 Z"
+            fill="#ffffff"
+            opacity="0.95"
+          />
+          <path
+            d="M69 62V54a8 8 0 0 1 8-8h6a8 8 0 0 1 8 8v8"
+            stroke="#ffffff"
+            strokeWidth="7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <rect
+            width="60"
+            height="46"
+            x="29"
+            y="62"
+            rx="7"
+            stroke="#ffffff"
+            strokeWidth="7"
+          />
         </svg>
       </div>
     ),

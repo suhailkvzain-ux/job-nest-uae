@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 /**
- * Next.js configuration for Job Nest UAE.
+ * Next.js configuration for Job For UAE.
  *
  * `headers()` (Phase 16) is this project's central security-header
  * enforcement point — applied to every route (public + admin, static +

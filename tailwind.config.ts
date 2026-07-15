@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 /**
- * Tailwind design system for Job Nest UAE.
+ * Tailwind design system for Job For UAE.
  *
  * Design direction: Apple / Linear / Stripe Dashboard / Vercel / Notion —
  * minimal, premium, modern SaaS. White canvas, blue gradient accent,

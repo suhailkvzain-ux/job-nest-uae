@@ -60,7 +60,11 @@ export async function getSiteMetadataDefaults(): Promise<SiteMetadataDefaults> {
   // project ships no pre-made `public/` brand imagery, so a hardcoded
   // static path would 404 until an admin uploads one.
   const ogImage = settings.seo.ogImageUrl || `${baseUrl}/opengraph-image`;
-  const logo = settings.general.logoUrl || `${baseUrl}/icon`;
+  const logo = settings.general.logoUrl
+    ? settings.general.logoUrl.startsWith("http")
+      ? settings.general.logoUrl
+      : `${baseUrl}${settings.general.logoUrl}`
+    : `${baseUrl}/icon`;
   const favicon = settings.general.faviconUrl || null;
 
   const twitterUrl = settings.social.twitter || siteConfig.social.twitter;

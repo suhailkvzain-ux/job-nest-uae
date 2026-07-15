@@ -14,7 +14,7 @@ import type { JobWithRelations } from "@/services/jobs.service";
  * the spec; the others follow the same convention for consistency).
  */
 
-/** Organization schema — identifies Job Nest UAE itself to search engines. Sourced from `/admin/settings` (Website Name, uploaded Logo, Social Media links) via `getSiteMetadataDefaults()`, falling back to `constants/site.ts` for anything not yet configured. */
+/** Organization schema — identifies Job For UAE itself to search engines. Sourced from `/admin/settings` (Website Name, uploaded Logo, Social Media links) via `getSiteMetadataDefaults()`, falling back to `constants/site.ts` for anything not yet configured. */
 export async function buildOrganizationSchema() {
   const defaults = await getSiteMetadataDefaults();
 
@@ -96,7 +96,7 @@ const employmentTypeSchemaMap: Record<EmploymentType, string> = {
  * the job (with its `company`/`category`/`location` relations already
  * included) and the canonical URL of the page.
  *
- * `directApply` is explicitly `false` — Job Nest UAE never hosts an
+ * `directApply` is explicitly `false` — Job For UAE never hosts an
  * application form, every listing sends the candidate to the employer's
  * own site or inbox, which is exactly what Google's `directApply`
  * property is meant to distinguish. `identifier` uses the job's own
@@ -115,7 +115,7 @@ export function buildJobPostingSchema(job: JobWithRelations, url: string) {
     description: job.description,
     identifier: {
       "@type": "PropertyValue",
-      name: "Job Nest UAE",
+      name: "Job For UAE",
       value: job.id,
     },
     datePosted: job.publishedAt ? new Date(job.publishedAt).toISOString() : undefined,

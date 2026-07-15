@@ -3,10 +3,10 @@
  * Import this anywhere instead of hardcoding the name/URL/description.
  */
 export const siteConfig = {
-  name: "Job Nest UAE",
-  shortName: "Job Nest",
+  name: "Job For UAE",
+  shortName: "Job For UAE",
   description:
-    "Discover verified job vacancies across the UAE. Job Nest UAE is a job discovery platform — browse listings and apply directly on the employer's official website.",
+    "Discover verified job vacancies across the UAE. Job For UAE is a job discovery platform — browse listings and apply directly on the employer's official website.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   ogImage: "/og-image.png",
   keywords: [
@@ -21,7 +21,7 @@ export const siteConfig = {
   country: "United Arab Emirates",
   social: {
     linkedin: "https://linkedin.com/company/job-nest-uae",
-    instagram: "https://instagram.com/jobnestuae",
-    twitter: "https://twitter.com/jobnestuae",
+    instagram: "https://instagram.com/jobforuae",
+    twitter: "https://twitter.com/jobforuae",
   },
 } as const;

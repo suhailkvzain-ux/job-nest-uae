@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: JobDetailPageProps): Promise<
   const title = job.metaTitle ?? `${job.title} at ${job.company.name}`;
   const description =
     job.metaDescription ??
-    `${truncate(job.description, 150)} Apply directly on ${job.company.name}'s official website or email — Job Nest UAE.`;
+    `${truncate(job.description, 150)} Apply directly on ${job.company.name}'s official website or email — Job For UAE.`;
 
   return buildMetadata({
     title,

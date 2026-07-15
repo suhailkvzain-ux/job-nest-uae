@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: CategoryDetailPageProps): Pro
 
   return buildMetadata({
     title: `${category.name} Jobs in the UAE`,
-    description: `Browse verified ${category.name} job vacancies across the UAE. Apply directly on the employer's official website or email — Job Nest UAE.`,
+    description: `Browse verified ${category.name} job vacancies across the UAE. Apply directly on the employer's official website or email — Job For UAE.`,
     path: `/categories/${category.slug}`,
   });
 }

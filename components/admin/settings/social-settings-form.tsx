@@ -17,11 +17,11 @@ export function SocialSettingsForm({ defaultValues }: { defaultValues: SocialSet
       >
         {(control) => (
           <>
-            <FormUrlInput control={control} name="facebook" label="Facebook" placeholder="https://facebook.com/jobnestuae" />
-            <FormUrlInput control={control} name="instagram" label="Instagram" placeholder="https://instagram.com/jobnestuae" />
-            <FormUrlInput control={control} name="linkedin" label="LinkedIn" placeholder="https://linkedin.com/company/jobnestuae" />
-            <FormUrlInput control={control} name="twitter" label="X (Twitter)" placeholder="https://x.com/jobnestuae" />
-            <FormUrlInput control={control} name="youtube" label="YouTube" placeholder="https://youtube.com/@jobnestuae" />
+            <FormUrlInput control={control} name="facebook" label="Facebook" placeholder="https://facebook.com/jobforuae" />
+            <FormUrlInput control={control} name="instagram" label="Instagram" placeholder="https://instagram.com/jobforuae" />
+            <FormUrlInput control={control} name="linkedin" label="LinkedIn" placeholder="https://linkedin.com/company/jobforuae" />
+            <FormUrlInput control={control} name="twitter" label="X (Twitter)" placeholder="https://x.com/jobforuae" />
+            <FormUrlInput control={control} name="youtube" label="YouTube" placeholder="https://youtube.com/@jobforuae" />
           </>
         )}
       </SettingsSectionForm>

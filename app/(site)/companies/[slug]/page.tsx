@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: CompanyDetailPageProps): Prom
     title: `${company.name} Jobs`,
     description:
       company.description ??
-      `Browse verified job vacancies at ${company.name} on Job Nest UAE. Apply directly on the employer's official website or email.`,
+      `Browse verified job vacancies at ${company.name} on Job For UAE. Apply directly on the employer's official website or email.`,
     path: `/companies/${company.slug}`,
   });
 }

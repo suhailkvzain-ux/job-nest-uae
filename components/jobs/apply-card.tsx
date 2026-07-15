@@ -19,7 +19,7 @@ interface ApplyCardProps {
 
 /**
  * Sticky "how to apply" card — always sends candidates to the employer's
- * own site/email (Job Nest UAE never hosts an application form). Wire
+ * own site/email (Job For UAE never hosts an application form). Wire
  * `onWebsiteClick`/`onEmailClick` to `incrementWebsiteClicks()` /
  * `incrementEmailClicks()` from the jobs service (bound Server Actions
  * passed down from the page). Renders nothing at all if neither
@@ -48,7 +48,7 @@ export function ApplyCard({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <p className="text-sm text-muted-foreground">
-          Job Nest UAE is a discovery platform — you'll apply directly on the employer's official
+          Job For UAE is a discovery platform — you'll apply directly on the employer's official
           site or via email.
         </p>
 

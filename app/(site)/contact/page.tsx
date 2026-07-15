@@ -18,7 +18,7 @@ export const revalidate = 60;
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Contact Us",
-    description: "Get in touch with the Job Nest UAE team — general inquiries, support, and social channels.",
+    description: "Get in touch with the Job For UAE team — general inquiries, support, and social channels.",
     path: "/contact",
   });
 }
@@ -66,7 +66,7 @@ export default async function ContactPage() {
               Contact Us
             </Heading>
             <Paragraph tone="secondary">
-              Have a question about a listing, your company&apos;s profile, or Job Nest UAE in general? Reach us directly
+              Have a question about a listing, your company&apos;s profile, or Job For UAE in general? Reach us directly
               below.
             </Paragraph>
             {contact.supportEmail && (

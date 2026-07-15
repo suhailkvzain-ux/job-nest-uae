@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Find Verified Jobs Across the UAE",
     description:
-      "Job Nest UAE is a job discovery platform publishing only verified vacancies sourced directly from official employers across Dubai, Abu Dhabi, Sharjah, and the rest of the UAE. Browse freely — apply directly on the employer's own site or email.",
+      "Job For UAE is a job discovery platform publishing only verified vacancies sourced directly from official employers across Dubai, Abu Dhabi, Sharjah, and the rest of the UAE. Browse freely — apply directly on the employer's own site or email.",
     path: "/",
   });
 }

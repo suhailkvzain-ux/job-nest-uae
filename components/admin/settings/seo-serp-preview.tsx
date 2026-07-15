@@ -19,9 +19,9 @@ export function SeoSerpPreview({ control }: { control: Control<SeoSettingsInput>
 
   const displayUrl = canonicalDomain
     ? canonicalDomain.replace(/^https?:\/\//, "").replace(/\/$/, "")
-    : "www.jobnestuae.com";
+    : "www.jobforuae.com";
 
-  const title = metaTitle || "Job Nest UAE | Find Jobs in the United Arab Emirates";
+  const title = metaTitle || "Job For UAE | Find Jobs in the United Arab Emirates";
   const description =
     metaDescription ||
     "Browse verified job openings across Dubai, Abu Dhabi, Sharjah, and the rest of the UAE. Apply directly with employers.";

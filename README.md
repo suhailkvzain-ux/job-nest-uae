@@ -1,4 +1,4 @@
-# Job Nest UAE — Project Foundation
+# Job For UAE — Project Foundation
 
 A job **discovery** platform for the UAE. Users browse verified vacancies and
 apply directly on the employer's official website or email — there are no
@@ -229,7 +229,7 @@ every service that derives a slug from a name.
 ### Seed data (`prisma/seed.ts`)
 
 Idempotent (safe to re-run): 8 locations, 10 categories, 5 companies,
-1 admin (`ADMIN_EMAIL` env var or `admin@jobnestuae.com`, password
+1 admin (`ADMIN_EMAIL` env var or `admin@jobforuae.com`, password
 `ChangeMe123!` — change immediately), 5 advertisements (one per
 position), and 6 sample jobs (5 published + 1 draft) covering a mix of
 employment types, salary ranges, and featured/verified states. Run with
@@ -615,7 +615,7 @@ here — do that, and a Lighthouse pass, once you have a real
 
 The final stop in a candidate's journey on the site: full detail on one
 verified vacancy, ending in a direct hand-off to the employer's own
-website or inbox. Job Nest UAE never collects an application itself.
+website or inbox. Job For UAE never collects an application itself.
 
 ### Data flow & caching
 

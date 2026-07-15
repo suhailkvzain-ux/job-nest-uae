@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Companies Hiring in the UAE",
     description:
-      "Browse every employer currently hiring on Job Nest UAE, sorted A–Z. No logos — every company gets a clean, auto-generated initials avatar.",
+      "Browse every employer currently hiring on Job For UAE, sorted A–Z. No logos — every company gets a clean, auto-generated initials avatar.",
     path: "/companies",
   });
 }
@@ -49,7 +49,7 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
             Companies Hiring Now
           </Heading>
           <Paragraph tone="secondary" className="max-w-lg">
-            Every employer currently hiring on Job Nest UAE, sorted A–Z.
+            Every employer currently hiring on Job For UAE, sorted A–Z.
           </Paragraph>
           <DirectorySearchBar placeholder="Search companies…" />
         </div>

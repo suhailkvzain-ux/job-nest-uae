@@ -26,7 +26,7 @@ export function Footer({ logoUrl }: { logoUrl?: string | null } = {}) {
                 href={siteConfig.social.linkedin}
                 target="_blank"
                 rel="noreferrer noopener"
-                aria-label="Job Nest UAE on LinkedIn"
+                aria-label="Job For UAE on LinkedIn"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-background text-muted-foreground shadow-soft transition-colors hover:text-primary"
               >
                 <Linkedin className="h-4 w-4" />
@@ -35,7 +35,7 @@ export function Footer({ logoUrl }: { logoUrl?: string | null } = {}) {
                 href={siteConfig.social.instagram}
                 target="_blank"
                 rel="noreferrer noopener"
-                aria-label="Job Nest UAE on Instagram"
+                aria-label="Job For UAE on Instagram"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-background text-muted-foreground shadow-soft transition-colors hover:text-primary"
               >
                 <Instagram className="h-4 w-4" />
@@ -44,7 +44,7 @@ export function Footer({ logoUrl }: { logoUrl?: string | null } = {}) {
                 href={siteConfig.social.twitter}
                 target="_blank"
                 rel="noreferrer noopener"
-                aria-label="Job Nest UAE on X"
+                aria-label="Job For UAE on X"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-background text-muted-foreground shadow-soft transition-colors hover:text-primary"
               >
                 <Twitter className="h-4 w-4" />
@@ -75,7 +75,7 @@ export function Footer({ logoUrl }: { logoUrl?: string | null } = {}) {
             © {year} {siteConfig.name}. All rights reserved.
           </p>
           <p>
-            Job listings link out to employers&apos; official websites. Job Nest UAE is a discovery
+            Job listings link out to employers&apos; official websites. Job For UAE is a discovery
             platform only.
           </p>
         </div>

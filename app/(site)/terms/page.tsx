@@ -18,7 +18,7 @@ const LAST_UPDATED = "11 July 2026";
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Terms & Conditions",
-    description: "The terms governing your use of Job Nest UAE.",
+    description: "The terms governing your use of Job For UAE.",
     path: "/terms",
   });
 }

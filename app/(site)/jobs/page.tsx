@@ -56,7 +56,7 @@ export async function generateMetadata({ searchParams }: JobsPageProps): Promise
 
   return buildMetadata({
     title,
-    description: `Browse ${title.toLowerCase()} — verified vacancies from official employer sources on Job Nest UAE. Apply directly on the employer's website or email.`,
+    description: `Browse ${title.toLowerCase()} — verified vacancies from official employer sources on Job For UAE. Apply directly on the employer's website or email.`,
     path: `/jobs${buildJobsQueryString(filters)}`,
   });
 }

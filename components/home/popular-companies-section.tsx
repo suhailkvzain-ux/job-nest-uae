@@ -27,7 +27,7 @@ export function PopularCompaniesSection({ companies }: { companies: CompanyWithJ
             Popular Companies
           </Heading>
           <Paragraph tone="secondary" className="max-w-lg">
-            Employers actively hiring on Job Nest UAE right now.
+            Employers actively hiring on Job For UAE right now.
           </Paragraph>
         </div>
 

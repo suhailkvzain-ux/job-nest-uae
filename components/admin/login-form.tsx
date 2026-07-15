@@ -33,7 +33,7 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
           name="email"
           type="email"
           autoComplete="email"
-          placeholder="admin@jobnestuae.com"
+          placeholder="admin@jobforuae.com"
           required
           aria-invalid={Boolean(state.error)}
         />

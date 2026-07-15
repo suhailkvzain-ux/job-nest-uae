@@ -45,7 +45,7 @@ export function GeneralSettingsForm({ defaultValues }: { defaultValues: GeneralS
               <FormSelect control={control} name="timeZone" label="Time Zone" options={TIME_ZONE_OPTIONS} />
             </div>
             <FormSelect control={control} name="dateFormat" label="Date Format" options={DATE_FORMAT_OPTIONS} />
-            <FormTextInput control={control} name="copyrightText" label="Copyright Text" placeholder="© 2026 Job Nest UAE. All rights reserved." />
+            <FormTextInput control={control} name="copyrightText" label="Copyright Text" placeholder="© 2026 Job For UAE. All rights reserved." />
           </>
         )}
       </SettingsSectionForm>
