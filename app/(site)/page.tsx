@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { AdSlot } from "@/components/ads/ad-slot";
+import { CareerResourcesSection } from "@/components/home/career-resources-section";
 import { CategoryGridSection } from "@/components/home/category-grid-section";
 import { CtaSection } from "@/components/home/cta-section";
 import { FeaturedJobsSection } from "@/components/home/featured-jobs-section";
@@ -114,6 +115,7 @@ export default async function HomePage() {
       <Suspense fallback={<PopularCompaniesSkeleton />}>
         <PopularCompaniesAsync />
       </Suspense>
+      <CareerResourcesSection />
       <WhyJobNestSection />
       <AdSlot position="HOMEPAGE_FOOTER" className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8" />
       <CtaSection />

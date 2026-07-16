@@ -36,6 +36,51 @@ export async function getCategoryBySlug(slug: string) {
   return prisma.category.findUnique({ where: { slug } });
 }
 
+export interface CategorySalaryRange {
+  id: string;
+  name: string;
+  slug: string;
+  jobCount: number;
+  avgMin: number | null;
+  avgMax: number | null;
+}
+
+/**
+ * Real average salary range per category, computed from currently
+ * published, non-expired job listings — backs the public Salary
+ * Guide page. Categories with zero live listings (nothing to
+ * average) are simply excluded rather than shown with a fabricated
+ * "AED 0" range.
+ */
+export async function getSalaryRangesByCategory(): Promise<CategorySalaryRange[]> {
+  const [categories, aggregates] = await Promise.all([
+    prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.job.groupBy({
+      by: ["categoryId"],
+      where: { status: "PUBLISHED", ...ACTIVE_JOB_WHERE, salaryMin: { not: null } },
+      _avg: { salaryMin: true, salaryMax: true },
+      _count: true,
+    }),
+  ]);
+
+  const byCategory = new Map(aggregates.map((a) => [a.categoryId, a]));
+
+  return categories
+    .map((category) => {
+      const agg = byCategory.get(category.id);
+      return {
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        jobCount: agg?._count ?? 0,
+        avgMin: agg?._avg.salaryMin ?? null,
+        avgMax: agg?._avg.salaryMax ?? null,
+      };
+    })
+    .filter((c) => c.avgMin !== null)
+    .sort((a, b) => b.jobCount - a.jobCount);
+}
+
 export async function getAllCategories() {
   return prisma.category.findMany({ orderBy: { name: "asc" } });
 }

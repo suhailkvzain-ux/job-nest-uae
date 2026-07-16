@@ -8,26 +8,34 @@ export interface NavItem {
 }
 
 export const mainNav: NavItem[] = [
-  { label: "Home", href: "/" },
   { label: "Jobs", href: "/jobs" },
-  { label: "Categories", href: "/categories" },
   { label: "Companies", href: "/companies" },
+  { label: "Categories", href: "/categories" },
   { label: "Locations", href: "/locations" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "Career Advice", href: "/career-advice" },
+  { label: "Salary Guide", href: "/salary-guide" },
 ];
 
 export const footerNav: { title: string; items: NavItem[] }[] = [
   {
-    title: "Quick Links",
+    title: "For Job Seekers",
     items: [
+      { label: "Browse Jobs", href: "/jobs" },
       { label: "Categories", href: "/categories" },
-      { label: "Companies", href: "/companies" },
       { label: "Locations", href: "/locations" },
-      { label: "About", href: "/about" },
+      { label: "Saved Jobs", href: "/saved" },
+      { label: "Career Advice", href: "/career-advice" },
+      { label: "Salary Guide", href: "/salary-guide" },
+    ],
+  },
+  {
+    title: "Company",
+    items: [
+      { label: "Companies", href: "/companies" },
+      { label: "About Us", href: "/about" },
+      { label: "Contact", href: "/contact" },
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Terms", href: "/terms" },
-      { label: "Contact", href: "/contact" },
     ],
   },
 ];

@@ -12,7 +12,7 @@ export function Footer({ logoUrl }: { logoUrl?: string | null } = {}) {
   return (
     <footer className="border-t border-border/60 bg-muted/40">
       <Container className="py-16">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.5fr_1fr]">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
               <SiteBrandMark logoUrl={logoUrl} name={siteConfig.name} />
@@ -55,7 +55,7 @@ export function Footer({ logoUrl }: { logoUrl?: string | null } = {}) {
           {footerNav.map((group) => (
             <div key={group.title} className="flex flex-col gap-3">
               <h3 className="text-sm font-semibold text-foreground">{group.title}</h3>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+              <div className="flex flex-col gap-3">
                 {group.items.map((item) => (
                   <Link
                     key={item.href}

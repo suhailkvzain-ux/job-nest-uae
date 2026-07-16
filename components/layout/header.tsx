@@ -43,7 +43,7 @@ export function Header({ logoUrl }: { logoUrl?: string | null } = {}) {
           {!logoUrl && <span className="text-base">{siteConfig.shortName}</span>}
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
+        <nav className="hidden items-center gap-6 lg:flex" aria-label="Main navigation">
           {mainNav.map((item) => (
             <Link
               key={item.href}
@@ -55,14 +55,14 @@ export function Header({ logoUrl }: { logoUrl?: string | null } = {}) {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           <ThemeToggle />
           <Link href="/jobs" className={cn(buttonVariants({ variant: "cta" }), "px-7")}>
             Browse Jobs
           </Link>
         </div>
 
-        <div className="flex items-center gap-1 md:hidden">
+        <div className="flex items-center gap-1 lg:hidden">
           <ThemeToggle />
           <button
             type="button"
@@ -81,7 +81,7 @@ export function Header({ logoUrl }: { logoUrl?: string | null } = {}) {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
-          className="glass border-t border-border/60 md:hidden"
+          className="glass border-t border-border/60 lg:hidden"
           aria-label="Mobile navigation"
         >
           <Container className="flex flex-col gap-1 py-4">
