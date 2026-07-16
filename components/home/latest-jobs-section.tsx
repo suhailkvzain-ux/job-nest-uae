@@ -39,12 +39,12 @@ export function LatestJobsSection({ initialJobs }: { initialJobs: JobWithRelatio
 
   return (
     <Section id="latest-jobs" aria-labelledby="latest-jobs-heading">
-      <Container className="flex flex-col gap-10">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <Heading level="h2" as="h2" id="latest-jobs-heading">
+      <Container className="flex flex-col gap-5 sm:gap-10">
+        <div className="flex flex-col items-center gap-1.5 text-center sm:gap-3">
+          <Heading level="h2" as="h2" id="latest-jobs-heading" className="text-xl sm:text-h2">
             Latest Jobs
           </Heading>
-          <Paragraph tone="secondary" className="max-w-lg">
+          <Paragraph tone="secondary" className="max-w-lg text-xs sm:text-body">
             Freshly published vacancies, newest first.
           </Paragraph>
         </div>
@@ -57,7 +57,7 @@ export function LatestJobsSection({ initialJobs }: { initialJobs: JobWithRelatio
           />
         ) : (
           <>
-            <Grid cols={{ base: 1, sm: 2, lg: 3 }} gap="lg">
+            <Grid cols={{ base: 2, sm: 2, lg: 3 }} gap="sm">
               {jobs.map((job) => (
                 <JobCard key={job.id} job={job} />
               ))}

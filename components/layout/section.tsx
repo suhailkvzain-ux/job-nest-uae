@@ -6,8 +6,8 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const spacingMap = {
-  default: "py-16 md:py-24",
-  compact: "py-8 md:py-12",
+  default: "py-10 md:py-20",
+  compact: "py-6 md:py-10",
   none: "",
 };
 
