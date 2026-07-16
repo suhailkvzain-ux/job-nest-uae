@@ -4,6 +4,7 @@ import Link from "next/link";
 import { EmploymentTypeBadge, FeaturedBadge, NewBadge } from "@/components/badges/status-badges";
 import { JobMeta } from "@/components/jobs/job-meta";
 import { SalaryBadge } from "@/components/jobs/job-meta-badges";
+import { SaveJobButton } from "@/components/jobs/save-job-button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -58,9 +59,10 @@ export function JobCard({ job, className }: JobCardProps) {
           className,
         )}
       >
-        {job.publishedAt && (
-          <NewBadge postedAt={job.publishedAt} className="absolute right-2.5 top-2.5 px-1.5 py-0.5 text-[10px]" />
-        )}
+        <div className="absolute right-2 top-2 flex items-center gap-1">
+          {job.publishedAt && <NewBadge postedAt={job.publishedAt} className="px-1.5 py-0.5 text-[10px]" />}
+          <SaveJobButton jobId={job.id} className="bg-card/80 backdrop-blur-sm" />
+        </div>
         <CardContent className="flex flex-1 flex-col gap-2.5 p-3.5 sm:gap-3 sm:p-5">
           <div className="flex items-start gap-2.5 sm:gap-3">
             <Avatar className="h-9 w-9 shrink-0 rounded-xl sm:h-11 sm:w-11 sm:rounded-2xl">
@@ -130,7 +132,10 @@ export function FeaturedJobCard({ job, className }: JobCardProps) {
         <CardContent className="flex flex-1 flex-col gap-2.5 p-4 sm:gap-4 sm:p-6">
           <div className="flex items-center justify-between">
             <FeaturedBadge className="px-1.5 py-0.5 text-[10px] sm:px-2.5 sm:py-1 sm:text-xs" />
-            <ArrowUpRight className="h-4 w-4 text-primary opacity-0 transition-opacity group-hover:opacity-100" />
+            <div className="flex items-center gap-1">
+              <SaveJobButton jobId={job.id} />
+              <ArrowUpRight className="h-4 w-4 text-primary opacity-0 transition-opacity group-hover:opacity-100" />
+            </div>
           </div>
 
           <div className="flex items-center gap-2.5 sm:gap-3">

@@ -13,10 +13,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const EXPERIENCE_RANGES = ["0-1 years", "1-3 years", "3-5 years", "5-8 years", "8+ years"];
+
 export interface AdvancedSearchValue {
   query: string;
   locationSlug?: string;
   categorySlug?: string;
+  experience?: string;
 }
 
 interface AdvancedSearchProps {
@@ -35,12 +38,13 @@ export function AdvancedSearch({ locations, categories, onSubmit, className }: A
   const [query, setQuery] = useState("");
   const [locationSlug, setLocationSlug] = useState<string>();
   const [categorySlug, setCategorySlug] = useState<string>();
+  const [experience, setExperience] = useState<string>();
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit({ query, locationSlug, categorySlug });
+        onSubmit({ query, locationSlug, categorySlug, experience });
       }}
       className={className}
     >
@@ -68,6 +72,19 @@ export function AdvancedSearch({ locations, categories, onSubmit, className }: A
             {categories.map((category) => (
               <SelectItem key={category.slug} value={category.slug}>
                 {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={experience} onValueChange={setExperience}>
+          <SelectTrigger className="md:w-40 md:border-0 md:shadow-none">
+            <SelectValue placeholder="Any Experience" />
+          </SelectTrigger>
+          <SelectContent>
+            {EXPERIENCE_RANGES.map((range) => (
+              <SelectItem key={range} value={range}>
+                {range}
               </SelectItem>
             ))}
           </SelectContent>

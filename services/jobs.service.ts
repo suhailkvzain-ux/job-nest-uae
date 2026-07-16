@@ -290,6 +290,22 @@ export async function getLatestJobs(
   });
 }
 
+/**
+ * Fetch published jobs by id, preserving no particular order (caller
+ * re-sorts if needed) — backs the client-side "Saved Jobs" page, whose
+ * ids come from localStorage rather than a database relation. Jobs
+ * that were unpublished/deleted/expired since being saved are simply
+ * omitted rather than erroring, so a stale saved id never breaks the
+ * page.
+ */
+export async function getJobsByIds(ids: string[]): Promise<JobWithRelations[]> {
+  if (ids.length === 0) return [];
+  return prisma.job.findMany({
+    where: { id: { in: ids }, status: "PUBLISHED", ...ACTIVE_JOB_WHERE, ...notExpiredWhere() },
+    include: jobWithRelations,
+  });
+}
+
 export async function getFeaturedJobs(take = 6): Promise<JobWithRelations[]> {
   return prisma.job.findMany({
     where: { status: "PUBLISHED", featured: true, ...ACTIVE_JOB_WHERE, ...notExpiredWhere() },

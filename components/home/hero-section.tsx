@@ -44,9 +44,10 @@ export function HeroSection({ locations, categories, stats }: HeroSectionProps) 
 
   function handleSearch(value: AdvancedSearchValue) {
     const params = new URLSearchParams();
-    if (value.query) params.set("query", value.query);
+    if (value.query) params.set("search", value.query);
     if (value.locationSlug) params.set("location", value.locationSlug);
     if (value.categorySlug) params.set("category", value.categorySlug);
+    if (value.experience) params.set("experience", value.experience);
     router.push(`/jobs${params.toString() ? `?${params.toString()}` : ""}`);
   }
 

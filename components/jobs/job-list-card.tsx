@@ -4,6 +4,7 @@ import { FeaturedBadge, NewBadge, VerifiedBadge } from "@/components/badges/stat
 import { ApplyButtons } from "@/components/jobs/apply-buttons";
 import { CompanyInitial } from "@/components/jobs/job-card";
 import { JobMeta } from "@/components/jobs/job-meta";
+import { SaveJobButton } from "@/components/jobs/save-job-button";
 import { Avatar } from "@/components/ui/avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,6 +37,7 @@ export function JobListCard({ job }: { job: JobWithRelations }) {
               <span className="text-sm text-muted-foreground">{job.company.name}</span>
             </div>
           </div>
+          <SaveJobButton jobId={job.id} size="md" />
         </div>
 
         <div className="flex flex-wrap gap-1.5">

@@ -4,6 +4,7 @@ import { AdsenseScript } from "@/components/ads/adsense-script";
 import { PageViewTracker } from "@/components/analytics/page-view-tracker";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { getAllSettings } from "@/services/settings.service";
 
 /**
@@ -30,8 +31,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <PageViewTracker />
       </Suspense>
       <Header logoUrl={logoUrl} />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-16 md:pb-0">{children}</main>
       <Footer logoUrl={logoUrl} />
+      <MobileBottomNav />
     </>
   );
 }

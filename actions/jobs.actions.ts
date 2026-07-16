@@ -1,7 +1,7 @@
 "use server";
 
 import { isRateLimited } from "@/lib/rate-limit";
-import { getLatestJobs } from "@/services/jobs.service";
+import { getJobsByIds, getLatestJobs } from "@/services/jobs.service";
 
 /**
  * Server Action backing the homepage's "Load More" button on Latest
@@ -19,4 +19,15 @@ import { getLatestJobs } from "@/services/jobs.service";
 export async function loadMoreLatestJobsAction(page: number) {
   if (await isRateLimited("load-more-jobs", 30)) return [];
   return getLatestJobs({ page, pageSize: 6 });
+}
+
+/**
+ * Backs the /saved page — the client reads its saved-job ids out of
+ * localStorage (no accounts on this site) and passes them here to
+ * fetch the actual job records to render.
+ */
+export async function getSavedJobsAction(ids: string[]) {
+  if (!Array.isArray(ids) || ids.length === 0 || ids.length > 200) return [];
+  if (await isRateLimited("get-saved-jobs", 60)) return [];
+  return getJobsByIds(ids.filter((id) => typeof id === "string").slice(0, 200));
 }
