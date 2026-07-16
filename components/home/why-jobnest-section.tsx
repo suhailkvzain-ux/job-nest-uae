@@ -16,16 +16,10 @@ interface Feature {
   accent: "purple" | "green" | "blue";
 }
 
-const CARD_BG: Record<Feature["accent"], string> = {
-  purple: "bg-badge-purple",
-  green: "bg-badge-green",
-  blue: "bg-badge-blue",
-};
-
 const CHIP_CLASSES: Record<Feature["accent"], string> = {
-  purple: "bg-badge-purple-foreground text-white",
-  green: "bg-badge-green-foreground text-white",
-  blue: "bg-badge-blue-foreground text-white",
+  purple: "bg-badge-purple-foreground/10 text-badge-purple-foreground",
+  green: "bg-badge-green-foreground/10 text-badge-green-foreground",
+  blue: "bg-badge-blue-foreground/10 text-badge-blue-foreground",
 };
 
 const FEATURES: Feature[] = [
@@ -50,9 +44,10 @@ const FEATURES: Feature[] = [
 ];
 
 /**
- * Homepage "Why Job For UAE" — three trust/value-prop cards, each a
- * full soft-tinted card (not just a white card with a tinted icon) to
- * match the same "colorful card grid" treatment as `CategoryCard`.
+ * Homepage "Why Job For UAE" — three trust/value-prop cards on a
+ * neutral card surface with a single small colored icon chip each,
+ * matching `CategoryCard`'s restrained accent treatment rather than a
+ * full-color tinted block.
  */
 export function WhyJobNestSection() {
   return (
@@ -71,14 +66,9 @@ export function WhyJobNestSection() {
           <Grid cols={{ base: 1, md: 3 }} gap="lg">
             {FEATURES.map(({ icon: Icon, title, description, accent }) => (
               <StaggerItem key={title}>
-                <div
-                  className={cn(
-                    "h-full rounded-2xl border border-black/[0.03] text-center transition-all hover:-translate-y-1 hover:shadow-soft-lg dark:border-white/[0.04]",
-                    CARD_BG[accent],
-                  )}
-                >
+                <div className="h-full rounded-2xl border border-border/60 bg-card text-center transition-all hover:-translate-y-0.5 hover:border-border hover:shadow-soft-lg">
                   <div className="flex h-full flex-col items-center gap-4 p-8">
-                    <span className={cn("flex h-14 w-14 items-center justify-center rounded-2xl shadow-sm", CHIP_CLASSES[accent])}>
+                    <span className={cn("flex h-14 w-14 items-center justify-center rounded-xl", CHIP_CLASSES[accent])}>
                       <Icon className="h-6 w-6" strokeWidth={1.75} />
                     </span>
                     <div className="flex flex-col gap-2">

@@ -22,21 +22,19 @@ export interface CategoryCardProps {
   accent?: "blue" | "green" | "orange" | "purple";
 }
 
-const CARD_BG: Record<NonNullable<CategoryCardProps["accent"]>, string> = {
-  blue: "bg-badge-blue",
-  green: "bg-badge-green",
-  orange: "bg-badge-orange",
-  purple: "bg-badge-purple",
-};
-
 const CHIP_CLASSES: Record<NonNullable<CategoryCardProps["accent"]>, string> = {
-  blue: "bg-badge-blue-foreground text-white",
-  green: "bg-badge-green-foreground text-white",
-  orange: "bg-badge-orange-foreground text-white",
-  purple: "bg-badge-purple-foreground text-white",
+  blue: "bg-badge-blue-foreground/10 text-badge-blue-foreground",
+  green: "bg-badge-green-foreground/10 text-badge-green-foreground",
+  orange: "bg-badge-orange-foreground/10 text-badge-orange-foreground",
+  purple: "bg-badge-purple-foreground/10 text-badge-purple-foreground",
 };
 
-/** Category tile — links to `/categories/[slug]`. */
+/**
+ * Category tile — links to `/categories/[slug]`. Neutral card surface
+ * (not a full-color tint) with a single small colored icon chip as
+ * the only accent — a restrained, premium look rather than a grid of
+ * candy-colored blocks.
+ */
 export function CategoryCard({
   name,
   slug,
@@ -50,8 +48,7 @@ export function CategoryCard({
     <Link href={`/categories/${slug}`} className="block h-full">
       <div
         className={cn(
-          "group h-full overflow-hidden rounded-2xl border border-black/[0.03] transition-all hover:-translate-y-1 hover:shadow-soft-lg dark:border-white/[0.04]",
-          CARD_BG[accent],
+          "group h-full overflow-hidden rounded-2xl border border-border/60 bg-card transition-all hover:-translate-y-0.5 hover:border-border hover:shadow-soft-lg",
           className,
         )}
       >
@@ -59,13 +56,13 @@ export function CategoryCard({
           <div className="flex items-start justify-between gap-3">
             <span
               className={cn(
-                "flex h-11 w-11 items-center justify-center rounded-2xl shadow-sm transition-transform group-hover:scale-105",
+                "flex h-11 w-11 items-center justify-center rounded-xl transition-transform group-hover:scale-105",
                 CHIP_CLASSES[accent],
               )}
             >
-              <Icon className="h-5 w-5" strokeWidth={2} />
+              <Icon className="h-5 w-5" strokeWidth={1.75} />
             </span>
-            <ArrowUpRight className="h-4 w-4 shrink-0 text-foreground/40 opacity-0 transition-opacity group-hover:opacity-100" />
+            <ArrowUpRight className="h-4 w-4 shrink-0 text-foreground/30 opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
           <div className="flex flex-1 flex-col gap-1">
             <span className="font-semibold text-foreground">{name}</span>

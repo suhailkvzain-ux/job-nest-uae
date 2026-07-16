@@ -18,12 +18,12 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-brand-gradient text-primary-foreground shadow-soft hover:shadow-soft-lg hover:brightness-105",
+          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:scale-[0.98]",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         outline: "border border-border bg-background hover:bg-muted",
         ghost: "hover:bg-muted",
         link: "text-primary underline-offset-4 hover:underline",
-        cta: "bg-brand-gradient font-semibold tracking-tight text-primary-foreground shadow-[0_1px_1px_rgba(255,255,255,0.35)_inset,0_10px_24px_-8px_hsl(var(--brand-start)/0.55)] ring-1 ring-white/15 hover:shadow-[0_1px_1px_rgba(255,255,255,0.4)_inset,0_16px_32px_-8px_hsl(var(--brand-start)/0.6)] hover:brightness-[1.07] active:scale-[0.97] active:brightness-95",
+        cta: "bg-primary font-medium tracking-tight text-primary-foreground shadow-sm hover:bg-primary/90 active:scale-[0.98]",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
       },
       size: {
