@@ -59,6 +59,23 @@ export function HeroSection({ locations, categories, stats }: HeroSectionProps) 
           <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-primary/25 blur-3xl" aria-hidden="true" />
           <div className="pointer-events-none absolute -bottom-24 -right-10 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" aria-hidden="true" />
 
+          {/* Original hand-drawn UAE skyline silhouette (no photo/stock
+              asset — generic building massing, not a copy of any real
+              skyline) anchored to the banner's bottom edge for visual
+              depth, matching the "city backdrop" feel of the reference
+              design without needing a licensed photograph. */}
+          <svg
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-24 w-full opacity-40 sm:h-32 md:h-40"
+            viewBox="0 0 1200 200"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M0 200 V150 h30 V120 h20 V150 h25 V90 h18 V150 h35 V110 h15 V150 h40 V70 l10 -15 l10 15 V150 h30 V130 h20 V150 h45 V60 h22 V150 h30 V100 h16 V150 h50 V40 h8 V30 h6 V40 h8 V150 h40 V95 h18 V150 h35 V115 h20 V150 h60 V55 h20 V45 h10 V55 h20 V150 h30 V120 h25 V150 h45 V75 h15 V150 h40 V100 h20 V150 h35 V130 h30 V150 h50 V85 h18 V150 h60 V150 H0 Z"
+              fill="white"
+            />
+          </svg>
+
           <FadeUp className="relative mx-auto flex max-w-2xl flex-col items-center gap-3 text-center sm:gap-5">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white ring-1 ring-white/15 backdrop-blur-sm sm:px-4 sm:py-1.5 sm:text-xs">
               <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
