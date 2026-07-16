@@ -1,6 +1,6 @@
 import { Banknote } from "lucide-react";
-import Link from "next/link";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Container } from "@/components/layout/container";
@@ -12,8 +12,8 @@ import { Paragraph } from "@/components/typography/text";
 import { Card, CardContent } from "@/components/ui/card";
 import { generateMetadata as buildMetadata } from "@/lib/seo";
 import { buildBreadcrumbSchema } from "@/lib/seo/json-ld";
-import { getSalaryRangesByCategory } from "@/services/categories.service";
 import { getSiteMetadataDefaults } from "@/lib/seo/site-metadata";
+import { getSalaryRangesByCategory } from "@/services/categories.service";
 import { formatNumber } from "@/utils/format";
 
 export const revalidate = 3600;

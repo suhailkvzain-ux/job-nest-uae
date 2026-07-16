@@ -1,6 +1,7 @@
 "use client";
 
 import { Bookmark, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { getSavedJobsAction } from "@/actions/jobs.actions";
@@ -64,9 +65,9 @@ export default function SavedJobsPage() {
             title="No saved jobs yet"
             description="Tap the bookmark icon on any job to save it here for later — saved jobs are stored on this device only."
             action={
-              <a href="/jobs" className={cn(buttonVariants({ variant: "outline" }))}>
+              <Link href="/jobs" className={cn(buttonVariants({ variant: "outline" }))}>
                 Browse Jobs
-              </a>
+              </Link>
             }
           />
         ) : (

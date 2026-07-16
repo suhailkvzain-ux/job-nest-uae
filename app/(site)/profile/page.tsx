@@ -1,6 +1,6 @@
 import { Bookmark, Mail, Search, ShieldCheck } from "lucide-react";
-import Link from "next/link";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
