@@ -195,6 +195,7 @@ export async function moveCategoryOrder(id: string, direction: "up" | "down") {
 
   const current = categories[index];
   const swap = categories[swapIndex];
+  if (!current || !swap) return;
 
   await prisma.$transaction([
     prisma.category.update({ where: { id: current.id }, data: { displayOrder: swap.displayOrder } }),
