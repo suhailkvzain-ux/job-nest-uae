@@ -2,7 +2,7 @@ import type { Category, Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { ensureUniqueSlug } from "@/lib/slug";
-import type { MasterDataSearchInput } from "@/lib/validations/admin-master-data";
+import type { AdminCategorySearchInput } from "@/lib/validations/admin-category";
 import {
   resolveCategorySlug,
   type CreateCategoryInput,
@@ -34,6 +34,11 @@ export async function deleteCategory(id: string) {
 
 export async function getCategoryBySlug(slug: string) {
   return prisma.category.findUnique({ where: { slug } });
+}
+
+/** Admin edit-form lookup by id (as opposed to `getCategoryBySlug`, used by the public site). */
+export async function getCategoryById(id: string) {
+  return prisma.category.findUnique({ where: { id } });
 }
 
 export interface CategorySalaryRange {
@@ -156,15 +161,83 @@ export async function getCategoryTotalJobCount(categoryId: string): Promise<numb
   return prisma.job.count({ where: { categoryId, ...ACTIVE_JOB_WHERE } });
 }
 
-/** `/admin/categories` list query — search by name, sort, paginate. See `getAdminCompaniesList()` for the in-application sort/paginate rationale. */
-export async function getAdminCategoriesList(
-  input: MasterDataSearchInput,
-): Promise<PaginatedResult<CategoryWithJobCount>> {
-  const where: Prisma.CategoryWhereInput = input.query
-    ? { name: { contains: input.query, mode: "insensitive" } }
-    : {};
+export interface AdminCategoryStats {
+  total: number;
+  active: number;
+  hidden: number;
+  totalJobs: number;
+}
 
-  const categories = await prisma.category.findMany({ where, orderBy: { name: "asc" } });
+/** Powers the four stat cards atop `/admin/categories` — Total/Active/Hidden Categories, Total Jobs across all of them. */
+export async function getAdminCategoryStats(): Promise<AdminCategoryStats> {
+  const [total, active, totalJobs] = await Promise.all([
+    prisma.category.count(),
+    prisma.category.count({ where: { isActive: true } }),
+    prisma.job.count({ where: ACTIVE_JOB_WHERE }),
+  ]);
+  return { total, active, hidden: total - active, totalJobs };
+}
+
+/**
+ * Swaps `displayOrder` with the adjacent category in the given
+ * direction — the spec's "Move Up / Move Down" card actions. Simpler
+ * and more predictable than a full drag-and-drop reorder for a
+ * single-step nudge, and it's the same UX the spec's card actions
+ * describe.
+ */
+export async function moveCategoryOrder(id: string, direction: "up" | "down") {
+  const categories = await prisma.category.findMany({ orderBy: { displayOrder: "asc" } });
+  const index = categories.findIndex((c) => c.id === id);
+  if (index === -1) return;
+
+  const swapIndex = direction === "up" ? index - 1 : index + 1;
+  if (swapIndex < 0 || swapIndex >= categories.length) return;
+
+  const current = categories[index];
+  const swap = categories[swapIndex];
+
+  await prisma.$transaction([
+    prisma.category.update({ where: { id: current.id }, data: { displayOrder: swap.displayOrder } }),
+    prisma.category.update({ where: { id: swap.id }, data: { displayOrder: current.displayOrder } }),
+  ]);
+}
+
+/** Clones a category as a new Draft-equivalent (inactive) copy — "Copy of {Name}", per the spec's Duplicate action. Never copies job associations. */
+export async function duplicateCategory(id: string) {
+  const original = await prisma.category.findUniqueOrThrow({ where: { id } });
+  const slug = await ensureUniqueSlug(`${original.slug}-copy`, (candidate) =>
+    prisma.category.findUnique({ where: { slug: candidate } }).then(Boolean),
+  );
+
+  return prisma.category.create({
+    data: {
+      name: `Copy of ${original.name}`,
+      slug,
+      description: original.description,
+      icon: original.icon,
+      displayOrder: original.displayOrder,
+      isActive: false,
+      featured: false,
+      popular: false,
+      showOnHomepage: false,
+      seoTitle: original.seoTitle,
+      seoDescription: original.seoDescription,
+      seoKeywords: original.seoKeywords,
+    },
+  });
+}
+
+/** `/admin/categories` list query — search, status/featured/popular filters, sort, paginate. */
+export async function getAdminCategoriesList(
+  input: AdminCategorySearchInput,
+): Promise<PaginatedResult<CategoryWithJobCount>> {
+  const where: Prisma.CategoryWhereInput = {};
+  if (input.query) where.name = { contains: input.query, mode: "insensitive" };
+  if (input.status) where.isActive = input.status === "active";
+  if (input.featured) where.featured = true;
+  if (input.popular) where.popular = true;
+
+  const categories = await prisma.category.findMany({ where, orderBy: { displayOrder: "asc" } });
 
   const counts =
     categories.length > 0
@@ -182,8 +255,11 @@ export async function getAdminCategoriesList(
   }));
 
   switch (input.sort) {
+    case "name_az":
+      withCounts = withCounts.slice().sort((a, b) => a.name.localeCompare(b.name));
+      break;
     case "name_za":
-      withCounts = withCounts.slice().reverse();
+      withCounts = withCounts.slice().sort((a, b) => b.name.localeCompare(a.name));
       break;
     case "newest":
       withCounts = withCounts.slice().sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
@@ -194,7 +270,7 @@ export async function getAdminCategoriesList(
     case "job_count":
       withCounts = withCounts.slice().sort((a, b) => b.jobCount - a.jobCount);
       break;
-    case "name_az":
+    case "display_order":
     default:
       break;
   }

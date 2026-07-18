@@ -12,7 +12,9 @@ import {
 import {
   createCategory,
   deleteCategory,
+  duplicateCategory,
   getCategoryTotalJobCount,
+  moveCategoryOrder,
   updateCategory,
 } from "@/services/categories.service";
 
@@ -29,6 +31,7 @@ export interface CategoryActionResult {
 function revalidateCategoryPaths(slug?: string) {
   revalidatePath("/admin/categories");
   revalidatePath("/categories");
+  revalidatePath("/");
   if (slug) revalidatePath(`/categories/${slug}`);
 }
 
@@ -109,5 +112,63 @@ export async function deleteCategoryAction(id: string): Promise<CategoryActionRe
     return { success: true, categoryId: category.id };
   } catch {
     return { success: false, error: "Could not delete the category. Please try again." };
+  }
+}
+
+/** Clones a category as an inactive "Copy of {Name}" draft — spec's Duplicate action. */
+export async function duplicateCategoryAction(id: string): Promise<CategoryActionResult> {
+  try {
+    await assertAdminAndRateLimit("duplicate-category");
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+
+  try {
+    const category = await duplicateCategory(id);
+    revalidateCategoryPaths();
+    return { success: true, categoryId: category.id, slug: category.slug };
+  } catch {
+    return { success: false, error: "Could not duplicate the category. Please try again." };
+  }
+}
+
+/** Nudges a category's display order up or down one position — spec's Move Up/Move Down card actions. */
+export async function moveCategoryAction(
+  id: string,
+  direction: "up" | "down",
+): Promise<CategoryActionResult> {
+  try {
+    await assertAdminAndRateLimit("move-category");
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+
+  try {
+    await moveCategoryOrder(id, direction);
+    revalidateCategoryPaths();
+    return { success: true };
+  } catch {
+    return { success: false, error: "Could not reorder categories. Please try again." };
+  }
+}
+
+/** Quick toggle for the card's Feature/Unfeature and Hide/Show actions — a partial update without opening the full edit form. */
+export async function toggleCategoryFieldAction(
+  id: string,
+  field: "featured" | "isActive",
+  value: boolean,
+): Promise<CategoryActionResult> {
+  try {
+    await assertAdminAndRateLimit("toggle-category-field");
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+
+  try {
+    const category = await updateCategory(id, { [field]: value });
+    revalidateCategoryPaths(category.slug);
+    return { success: true, categoryId: category.id };
+  } catch {
+    return { success: false, error: "Could not update the category. Please try again." };
   }
 }

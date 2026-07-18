@@ -1,35 +1,48 @@
+import { Plus } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
-import { CategoriesManager } from "@/components/admin/categories/categories-manager";
-import { parseMasterDataSearchParams, type RawMasterDataSearchParams } from "@/lib/admin-master-data-url";
-import { getAdminCategoriesList } from "@/services/categories.service";
+import { CategoryGrid } from "@/components/admin/categories/category-grid";
+import { CategoryPagination } from "@/components/admin/categories/category-pagination";
+import { CategoryStats } from "@/components/admin/categories/category-stats";
+import { CategoryToolbar } from "@/components/admin/categories/category-toolbar";
+import { Button } from "@/components/ui/button";
+import { parseAdminCategoriesSearchParams, type RawAdminCategorySearchParams } from "@/lib/admin-categories-url";
+import { getAdminCategoriesList, getAdminCategoryStats } from "@/services/categories.service";
 
 export const metadata: Metadata = { title: "Categories | Admin" };
 export const dynamic = "force-dynamic";
 
 interface AdminCategoriesPageProps {
-  searchParams: Promise<RawMasterDataSearchParams>;
+  searchParams: Promise<RawAdminCategorySearchParams>;
 }
 
-/** `/admin/categories` — Master Data Management for the job-category taxonomy. */
+/** `/admin/categories` — premium card-grid Categories Management, matching the reference spec. */
 export default async function AdminCategoriesPage({ searchParams }: AdminCategoriesPageProps) {
-  const filters = parseMasterDataSearchParams(await searchParams);
-  const results = await getAdminCategoriesList(filters);
+  const filters = parseAdminCategoriesSearchParams(await searchParams);
+  const [results, stats] = await Promise.all([getAdminCategoriesList(filters), getAdminCategoryStats()]);
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold text-foreground">Categories</h1>
-        <p className="text-sm text-muted-foreground">Manage the job categories used to organize vacancies.</p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-xl font-semibold text-foreground">Job Categories</h1>
+          <p className="text-sm text-muted-foreground">Manage job categories displayed on the JOB FOR UAE website.</p>
+        </div>
+        <Button asChild className="gap-2">
+          <Link href="/admin/categories/new">
+            <Plus className="h-4 w-4" /> Add Category
+          </Link>
+        </Button>
       </div>
 
-      <CategoriesManager
-        rows={results.items}
-        total={results.total}
-        page={results.page}
-        totalPages={results.totalPages}
-        filters={filters}
-      />
+      <CategoryStats stats={stats} />
+
+      <CategoryToolbar filters={filters} />
+
+      <CategoryGrid categories={results.items} />
+
+      <CategoryPagination filters={filters} page={results.page} totalPages={results.totalPages} />
     </div>
   );
 }

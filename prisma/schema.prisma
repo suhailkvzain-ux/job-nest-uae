@@ -188,12 +188,47 @@ model Category {
   // Management module. Never rendered on the public site (which only
   // ever showed name/slug/job-count), purely an admin-facing note.
   description String?  @db.Text
+
+  // Icon key (e.g. "briefcase", "building") resolved client-side to a
+  // lucide-react outline icon — never an emoji, per the admin design
+  // spec. Nullable so existing categories keep working with a fallback
+  // icon until an admin picks one.
+  icon String?
+
+  // Explicit admin-controlled ordering for the category grid and the
+  // homepage category picker — separate from `name` (alphabetical) so
+  // an admin can promote/demote categories without renaming them.
+  displayOrder Int @default(0) @map("display_order")
+
+  // Active/Inactive toggle — an inactive category is hidden from the
+  // public site entirely (not just the homepage) but keeps its jobs
+  // and admin history intact, unlike a hard delete.
+  isActive Boolean @default(true) @map("is_active")
+
+  // "Featured" surfaces a category in promotional admin/homepage
+  // contexts; "popular" is a separate, independently-toggleable badge
+  // per the spec (a category can be one, both, or neither).
+  featured Boolean @default(false)
+  popular  Boolean @default(false)
+
+  // Homepage visibility is deliberately its own flag rather than
+  // reusing `featured` — a category can be shown on the homepage grid
+  // without being marked "Featured" everywhere else it appears.
+  showOnHomepage Boolean @default(false) @map("show_on_homepage")
+
+  seoTitle       String? @map("seo_title")
+  seoDescription String? @map("seo_description")
+  seoKeywords    String? @map("seo_keywords")
+  ogImage        String? @map("og_image")
+
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   jobs Job[]
 
   @@index([name])
+  @@index([displayOrder])
+  @@index([isActive])
   @@map("categories")
 }
 
