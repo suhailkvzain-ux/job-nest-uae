@@ -107,6 +107,7 @@ const EMPTY_DEFAULTS: CreateJobInput = {
   status: "DRAFT",
   featured: false,
   verified: false,
+  urgent: false,
   metaTitle: null,
   metaDescription: null,
   ogTitle: null,
@@ -397,6 +398,7 @@ export function JobForm({
             <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row">
               <FormSwitch control={control} name="featured" label="Featured" className="flex-1" />
               <FormSwitch control={control} name="verified" label="Verified" className="flex-1" />
+              <FormSwitch control={control} name="urgent" label="Urgent Hiring" className="flex-1" />
             </div>
           </CardContent>
         </Card>

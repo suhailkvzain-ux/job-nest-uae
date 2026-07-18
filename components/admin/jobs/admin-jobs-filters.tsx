@@ -34,6 +34,7 @@ type Draft = Pick<
   | "employmentType"
   | "featured"
   | "verified"
+  | "urgent"
   | "publishedFrom"
   | "publishedTo"
   | "deadlineFrom"
@@ -49,6 +50,7 @@ function draftFromFilters(filters: AdminJobSearchInput): Draft {
     employmentType: filters.employmentType,
     featured: filters.featured,
     verified: filters.verified,
+    urgent: filters.urgent,
     publishedFrom: filters.publishedFrom,
     publishedTo: filters.publishedTo,
     deadlineFrom: filters.deadlineFrom,
@@ -64,6 +66,7 @@ const EMPTY_DRAFT: Draft = {
   employmentType: undefined,
   featured: undefined,
   verified: undefined,
+  urgent: undefined,
   publishedFrom: undefined,
   publishedTo: undefined,
   deadlineFrom: undefined,
@@ -214,6 +217,13 @@ export function AdminJobsFilters({ initialFilters, companies, categories, locati
               Verified only
             </Label>
             <Switch id="filter-verified" checked={Boolean(draft.verified)} onCheckedChange={(v) => patch({ verified: v })} />
+          </div>
+
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-border/60 p-3">
+            <Label htmlFor="filter-urgent" className="cursor-pointer font-normal">
+              Urgent only
+            </Label>
+            <Switch id="filter-urgent" checked={Boolean(draft.urgent)} onCheckedChange={(v) => patch({ urgent: v })} />
           </div>
 
           <div className="flex flex-col gap-2">

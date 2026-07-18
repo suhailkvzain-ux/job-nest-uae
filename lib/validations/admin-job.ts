@@ -32,6 +32,9 @@ export const adminJobSearchSchema = z.object({
   employmentType: employmentTypeEnum.optional(),
   featured: z.boolean().optional(),
   verified: z.boolean().optional(),
+  urgent: z.boolean().optional(),
+  /** Derived-state filter for the "Expired" status tab — PUBLISHED jobs whose applicationDeadline has passed. Not a stored JobStatus value; kept separate from `status` so it can be applied on top of (or exclusive of) it. */
+  expired: z.boolean().optional(),
   publishedFrom: z.coerce.date().optional(),
   publishedTo: z.coerce.date().optional(),
   deadlineFrom: z.coerce.date().optional(),

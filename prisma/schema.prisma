@@ -266,6 +266,7 @@ model Job {
   status   JobStatus @default(DRAFT)
   featured Boolean   @default(false)
   verified Boolean   @default(false)
+  urgent   Boolean   @default(false)
 
   metaTitle       String? @map("meta_title")
   metaDescription String? @map("meta_description")
@@ -296,6 +297,7 @@ model Job {
   @@index([companyId])
   @@index([featured])
   @@index([verified])
+  @@index([urgent])
   // Composite indexes matching the platform's actual hot-path queries —
   // "published jobs, newest first" and "featured jobs" both filter on
   // status before sorting/filtering further.

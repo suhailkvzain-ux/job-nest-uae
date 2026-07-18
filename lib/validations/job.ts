@@ -63,6 +63,7 @@ const baseJobFields = {
   status: jobStatusEnum.default("DRAFT"),
   featured: z.boolean().default(false),
   verified: z.boolean().default(false),
+  urgent: z.boolean().default(false),
 
   metaTitle: z
     .string()
@@ -156,6 +157,7 @@ export const jobSearchSchema = z.object({
   visaStatus: z.array(z.string().trim()).default([]),
   featured: z.boolean().optional(),
   verified: z.boolean().optional(),
+  urgent: z.boolean().optional(),
   postedWithin: postedWithinEnum.optional(),
   status: jobStatusEnum.optional(),
   sort: jobSortEnum.default("newest"),

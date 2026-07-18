@@ -842,6 +842,14 @@ function buildAdminJobWhere(input: AdminJobSearchInput): Prisma.JobWhereInput {
   if (input.employmentType) where.employmentType = input.employmentType;
   if (input.featured) where.featured = true;
   if (input.verified) where.verified = true;
+  if (input.urgent) where.urgent = true;
+  // "Expired" tab: PUBLISHED jobs whose deadline has passed. Applied on
+  // top of (rather than instead of) an explicit `status` filter so it
+  // composes correctly if both are ever set at once.
+  if (input.expired) {
+    where.status = "PUBLISHED";
+    where.applicationDeadline = { lt: new Date() };
+  }
 
   if (input.publishedFrom || input.publishedTo) {
     where.publishedAt = {
@@ -858,6 +866,38 @@ function buildAdminJobWhere(input: AdminJobSearchInput): Prisma.JobWhereInput {
   }
 
   return where;
+}
+
+export interface AdminJobStatusCounts {
+  all: number;
+  draft: number;
+  published: number;
+  expired: number;
+}
+
+/**
+ * Live counts for the admin Jobs list's status tabs (All / Draft /
+ * Published / Expired). "Expired" isn't a stored `JobStatus` value —
+ * it's a derived state: a job that's still `PUBLISHED` but whose
+ * `applicationDeadline` has passed. Counting it this way (rather than a
+ * background job flipping status to an "EXPIRED" enum value) means the
+ * count is always correct the instant a deadline passes, with no cron
+ * dependency, at the cost of one extra indexed count query here.
+ * "All" excludes soft-deleted rows, matching every other admin query
+ * (`ACTIVE_JOB_WHERE`).
+ */
+export async function getAdminJobStatusCounts(): Promise<AdminJobStatusCounts> {
+  const now = new Date();
+  const [all, draft, published, expired] = await Promise.all([
+    prisma.job.count({ where: ACTIVE_JOB_WHERE }),
+    prisma.job.count({ where: { ...ACTIVE_JOB_WHERE, status: "DRAFT" } }),
+    prisma.job.count({ where: { ...ACTIVE_JOB_WHERE, status: "PUBLISHED" } }),
+    prisma.job.count({
+      where: { ...ACTIVE_JOB_WHERE, status: "PUBLISHED", applicationDeadline: { lt: now } },
+    }),
+  ]);
+
+  return { all, draft, published, expired };
 }
 
 /** Same stable-tiebreaker fix as `buildJobOrderBy()` above — every branch ends with `{ id: "asc" }`. */

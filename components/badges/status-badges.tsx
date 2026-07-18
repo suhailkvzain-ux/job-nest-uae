@@ -1,5 +1,5 @@
 import type { EmploymentType, JobStatus } from "@prisma/client";
-import { BadgeCheck, Home, Sparkles, Star } from "lucide-react";
+import { BadgeCheck, Flame, Home, Sparkles, Star } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -18,6 +18,15 @@ export function FeaturedBadge({ className }: { className?: string }) {
   return (
     <Badge className={cn("gap-1 bg-badge-orange text-badge-orange-foreground", className)}>
       <Star className="h-3 w-3 fill-current" /> Featured
+    </Badge>
+  );
+}
+
+/** Urgent hiring indicator — independent of Featured/Verified, per the admin spec's own Urgent Hiring toggle. */
+export function UrgentBadge({ className }: { className?: string }) {
+  return (
+    <Badge variant="destructive" className={cn("gap-1", className)}>
+      <Flame className="h-3 w-3 fill-current" /> Urgent
     </Badge>
   );
 }

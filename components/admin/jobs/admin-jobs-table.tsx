@@ -11,6 +11,7 @@ import {
   EmploymentTypeBadge,
   FeaturedBadge,
   JobStatusBadge,
+  UrgentBadge,
   VerifiedBadge,
 } from "@/components/badges/status-badges";
 import {
@@ -161,6 +162,9 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
                 Featured
               </th>
               <th scope="col" className="py-3 pr-4 font-medium">
+                Urgent
+              </th>
+              <th scope="col" className="py-3 pr-4 font-medium">
                 Verified
               </th>
               <th scope="col" className="py-3 pr-4 font-medium">
@@ -211,6 +215,13 @@ export function AdminJobsTable({ jobs }: { jobs: JobWithRelations[] }) {
                 <td className="py-3 pr-4">
                   {job.featured ? (
                     <FeaturedBadge />
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
+                </td>
+                <td className="py-3 pr-4">
+                  {job.urgent ? (
+                    <UrgentBadge />
                   ) : (
                     <span className="text-muted-foreground">—</span>
                   )}

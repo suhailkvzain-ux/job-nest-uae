@@ -25,6 +25,8 @@ export function parseAdminJobsSearchParams(searchParams: RawAdminSearchParams): 
     employmentType: toSingle(searchParams.type),
     featured: toSingle(searchParams.featured) === "true" ? true : undefined,
     verified: toSingle(searchParams.verified) === "true" ? true : undefined,
+    urgent: toSingle(searchParams.urgent) === "true" ? true : undefined,
+    expired: toSingle(searchParams.expired) === "true" ? true : undefined,
     publishedFrom: toSingle(searchParams.publishedFrom),
     publishedTo: toSingle(searchParams.publishedTo),
     deadlineFrom: toSingle(searchParams.deadlineFrom),
@@ -49,6 +51,8 @@ export function buildAdminJobsQueryString(filters: Partial<AdminJobSearchInput>)
   if (filters.employmentType) params.set("type", filters.employmentType);
   if (filters.featured) params.set("featured", "true");
   if (filters.verified) params.set("verified", "true");
+  if (filters.urgent) params.set("urgent", "true");
+  if (filters.expired) params.set("expired", "true");
   if (filters.publishedFrom) params.set("publishedFrom", filters.publishedFrom.toISOString());
   if (filters.publishedTo) params.set("publishedTo", filters.publishedTo.toISOString());
   if (filters.deadlineFrom) params.set("deadlineFrom", filters.deadlineFrom.toISOString());
@@ -71,6 +75,8 @@ export function countActiveAdminFilters(filters: AdminJobSearchInput): number {
   if (filters.employmentType) count += 1;
   if (filters.featured) count += 1;
   if (filters.verified) count += 1;
+  if (filters.urgent) count += 1;
+  if (filters.expired) count += 1;
   if (filters.publishedFrom || filters.publishedTo) count += 1;
   if (filters.deadlineFrom || filters.deadlineTo) count += 1;
   return count;

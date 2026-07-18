@@ -6,6 +6,7 @@ import { AdminJobsFilters } from "@/components/admin/jobs/admin-jobs-filters";
 import { AdminJobsPagination } from "@/components/admin/jobs/admin-jobs-pagination";
 import { AdminJobsSearchBar } from "@/components/admin/jobs/admin-jobs-search-bar";
 import { AdminJobsSortControl } from "@/components/admin/jobs/admin-jobs-sort-control";
+import { AdminJobsStatusTabs } from "@/components/admin/jobs/admin-jobs-status-tabs";
 import { AdminJobsTable } from "@/components/admin/jobs/admin-jobs-table";
 import { ExportJobsCsvButton } from "@/components/admin/jobs/export-jobs-csv-button";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import { parseAdminJobsSearchParams, type RawAdminSearchParams } from "@/lib/adm
 import type { AdminJobSearchInput } from "@/lib/validations/admin-job";
 import { getAllCategories } from "@/services/categories.service";
 import { getAllCompanies } from "@/services/companies.service";
-import { getAdminJobsList } from "@/services/jobs.service";
+import { getAdminJobsList, getAdminJobStatusCounts } from "@/services/jobs.service";
 import { getAllLocations } from "@/services/locations.service";
 import { formatNumber } from "@/utils/format";
 
@@ -29,6 +30,7 @@ function AdminJobsResultsSkeleton() {
   return (
     <div className="flex flex-col gap-6" role="status" aria-live="polite" aria-label="Loading jobs">
       <span className="sr-only">Loading jobs…</span>
+      <Skeleton className="h-14 w-full max-w-xl rounded-2xl" />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <Skeleton className="h-4 w-28" />
         <div className="flex items-center gap-2">
@@ -98,9 +100,13 @@ export default async function AdminJobsPage({ searchParams }: AdminJobsPageProps
     getAllLocations(),
   ]);
 
+  const statusCounts = await getAdminJobStatusCounts();
+
   return (
     <div className="flex flex-col gap-6">
       <AdminJobsSearchBar />
+
+      <AdminJobsStatusTabs filters={filters} counts={statusCounts} />
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <AdminJobsFilters
