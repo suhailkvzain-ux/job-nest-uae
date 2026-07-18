@@ -28,11 +28,16 @@ export const createCategorySchema = z.object({
     .optional(),
 });
 
-export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
+// Use z.input (pre-parse shape) rather than z.infer (post-parse shape) so that
+// fields with `.default()` (icon, displayOrder, isActive, featured, popular,
+// showOnHomepage) stay optional for callers -- Zod fills them in at parse time.
+// Callers like the inline "create new category" action in job-form.tsx only
+// supply `name` and rely on these defaults.
+export type CreateCategoryInput = z.input<typeof createCategorySchema>;
 
 export const updateCategorySchema = z.object(baseCategoryFields).partial();
 
-export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>;
+export type UpdateCategoryInput = z.input<typeof updateCategorySchema>;
 
 export function resolveCategorySlug(input: { name: string; slug?: string }): string {
   return input.slug ?? slugify(input.name);
