@@ -70,5 +70,9 @@ export const CATEGORY_ICON_KEYS = Object.keys(CATEGORY_ICONS);
 export const DEFAULT_CATEGORY_ICON = "briefcase";
 
 export function getCategoryIcon(icon?: string | null): LucideIcon {
-  return CATEGORY_ICONS[icon ?? ""] ?? CATEGORY_ICONS[DEFAULT_CATEGORY_ICON];
+  // `noUncheckedIndexedAccess` types every Record index lookup as possibly
+  // `undefined`, even the DEFAULT_CATEGORY_ICON fallback lookup -- fall back
+  // to the Briefcase import directly so the return type is a guaranteed
+  // LucideIcon, not `LucideIcon | undefined`.
+  return CATEGORY_ICONS[icon ?? ""] ?? CATEGORY_ICONS[DEFAULT_CATEGORY_ICON] ?? Briefcase;
 }
